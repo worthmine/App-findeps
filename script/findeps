@@ -31,7 +31,7 @@ foreach my $key ( sort keys %$map ) {
     push @list, $dist;
 }
 
-die "No modules is to be installed\n" unless @list;
+die "Ready to run @ARGV\n" unless @list;
 
 say $_ for @list;
 

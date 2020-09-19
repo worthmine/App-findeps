@@ -6,28 +6,29 @@ use warnings;
 our $VERSION = "0.01";
 
 use Carp qw(carp croak);
+use File::Find qw(find);
 use ExtUtils::Installed;
 use List::Util qw(first);
 
-our $RE = qr/(?:(?:\w+::)+?\w+|(?:t\/)?\w+\.(p[ml]|t|cgi|psgi))$/i;
+my $RE    = qr/\w+\.((?i:p[ml]|t|cgi|psgi))$/;
+my @local = find( sub { $_[0] and $_[0] =~ /\.p[ml]$/ }, 'lib' );
 
 sub scan {
     my %args = @_;
     my $deps = {};
-    chdir("./lib");
-    my @local = glob "*.pm *.pl";
-    chdir("../");
     while ( my $file = shift @{ $args{files} } ) {
         $file =~ $RE;
         my $ext = $1 || croak 'Unvalid extension was set';
         open my $fh, '<', $file or die "Can't open < $file: $!";
         while (<$fh>) {
+            chomp;
+            next unless length $_;
+            last if /^__(?:END|DATA)__$/;
+            next if /^\s*#.*$/;
             my ( $name, $version ) = scan_line($_);
-            next unless defined $name;
-            next if first { $_ eq "$name.pm" or $_ eq "$name.pl" } @local;
-
-            #warn join '=>', $name, $version;
-            $deps->{$name} = $version if $version eq 'required';
+            next if !defined $name;
+            next if first { $_ =~ /$name.p[ml]/io } @local;
+            $deps->{$name} = $version unless defined $version;
         }
         close $fh;
     }
@@ -48,7 +49,6 @@ my @pragmas = qw(
 
 sub scan_line {
     local $_ = shift;
-    return if /^\s*#.*$/;
     return unless /(?:use\s*(?:base|parent|autouse)?|require)\s+(['"]?)([^'"\s;]+)\1/o;
     my $name = $2;
     return if $name =~ /^5/;
@@ -57,12 +57,10 @@ sub scan_line {
     my $installed = ExtUtils::Installed->new( skip_cwd => 1 );
     my $module    = first { $_ eq $name } $installed->modules();
     my $version   = eval { $installed->version($module) } || undef;
-    return ( $name, "$version" ) if $version;
-
-    $version = eval "no strict 'subs'; require $name; return \$${name}::VERSION"
-        if $name !~ /\.p[lm]$/;
-    return ( $name, $version ) if $version;
-    return ( $name, 'required' );
+    return ( $name, "$version" )     if $version;
+    return ( $name, $version || '' ) if $name =~ /\.p[lm]$/;
+    $version = eval "no strict 'subs';require $name;\$${name}::VERSION";
+    return ( $name, $version );
 }
 
 1;
