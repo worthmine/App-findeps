@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use feature qw(say);
 our $VERSION = "0.01";
-
+use lib 'lib';
 use App::findeps;
 use Getopt::Long;
 my $usage = "Usage: $0 FILE | cpanm\n";

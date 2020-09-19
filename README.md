@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.com/worthmine/App-findeps.svg?branch=master)](https://travis-ci.com/worthmine/App-findeps)
 # NAME
 
 App::findeps - the Module to find dependencies for files you've selected

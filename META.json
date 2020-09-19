@@ -43,7 +43,7 @@
       "runtime" : {
          "requires" : {
             "ExtUtils::Installed" : "2.18",
-            "File::Find" : "0",
+            "File::Find" : "1.34",
             "List::Util" : "1.55",
             "perl" : "5.012001"
          }
