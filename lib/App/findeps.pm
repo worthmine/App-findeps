@@ -50,6 +50,8 @@ my @pragmas = qw(
 sub scan_line {
     local $_ = shift;
     return unless /(?:use\s*(?:base|parent|autouse)?|require)\s+(['"]?)([^'"\s;]+)\1/o;
+
+    # use\s+(?:base|parent)\s+qw[\("'{](?:\s*([^'"\);]+))\s*[\)"'}]
     my $name = $2;
     return if $name =~ /^5/;
     return if first { $_ eq $name } @pragmas;
