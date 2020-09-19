@@ -5,7 +5,6 @@ use strict;
 use warnings;
 use feature qw(say);
 our $VERSION = "0.01";
-use lib 'lib';
 
 use App::findeps;
 use Getopt::Long;
@@ -44,3 +43,42 @@ sub _name {
     $str =~ s!^auto::(.+)::.*!$1!;
     return $str;
 }
+
+__END__
+
+=encoding utf-8
+
+=head1 NAME
+
+findeps - A command-line tool that resolves dependencies from modules
+
+=head1 SYNOPSIS
+
+just run like below:
+
+ $ findeps your_product.pl | cpanm
+ $ findeps Plack.psgi | cpanm
+ $ findeps index.cgi | cpanm
+ $ findeps t/00_compile.t | cpanm
+
+Now you can run the product you've made with many modules
+without installing them every time
+
+=head1 DESCRIPTION
+
+findeps is a simple command line program for ready to run.
+
+L<scandeps.pl> requires you to have L<CPANPLUS>, but this requires just only L<cpanm>.
+
+=head1 LICENSE
+
+Copyright (C) worthmine.
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=head1 AUTHOR
+
+Yuki Yoshida(L<worthmine|https://github.com/worthmine>)
+
+=cut

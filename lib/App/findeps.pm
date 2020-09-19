@@ -71,15 +71,25 @@ __END__
 
 =head1 NAME
 
-App::findeps - It's new $module
+App::findeps - the Module to find dependencies for files you've selected
 
 =head1 SYNOPSIS
 
-    use App::findeps;
+Via the command-line program L<findeps>;
+
+    $ findeps Plack.psgi | cpanm
+    $ findeps index.cgi | cpanm
+    $ findeps t/00_compile.t | cpanm
 
 =head1 DESCRIPTION
 
-App::findeps is ...
+App::findeps is base module for executing L<findeps>
+
+=head1 TODO
+
+    $ findeps Some::Module -makeCpanfile > cpanfile
+
+it will be useful to make some safe modules
 
 =head1 LICENSE
 
@@ -90,7 +100,7 @@ it under the same terms as Perl itself.
 
 =head1 AUTHOR
 
-worthmine E<lt>worthmine@gmail.comE<gt>
+Yuki Yoshida(L<worthmine|https://github.com/worthmine>)
 
 =cut
 

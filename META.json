@@ -1,7 +1,7 @@
 {
-   "abstract" : "It's new $module",
+   "abstract" : "the Module to find dependencies for files you've selected",
    "author" : [
-      "worthmine <worthmine@gmail.com>"
+      "Yuki Yoshida(L<worthmine|https://github.com/worthmine>)"
    ],
    "dynamic_config" : 0,
    "generated_by" : "Minilla/v3.1.10, CPAN::Meta::Converter version 2.150010",
@@ -42,7 +42,10 @@
       },
       "runtime" : {
          "requires" : {
-            "perl" : "5.008001"
+            "ExtUtils::Installed" : "2.18",
+            "File::Find" : "1.37",
+            "List::Util" : "1.55",
+            "perl" : "5.012001"
          }
       },
       "test" : {
@@ -52,8 +55,22 @@
       }
    },
    "release_status" : "unstable",
+   "resources" : {
+      "bugtracker" : {
+         "web" : "https://github.com/worthmine/App-findeps/issues"
+      },
+      "homepage" : "https://github.com/worthmine/App-findeps",
+      "repository" : {
+         "type" : "git",
+         "url" : "git://github.com/worthmine/App-findeps.git",
+         "web" : "https://github.com/worthmine/App-findeps"
+      }
+   },
    "version" : "0.01",
    "x_authority" : "cpan:WORTHMINE",
+   "x_contributors" : [
+      "worthmine <worthmine@gmail.com>"
+   ],
    "x_serialization_backend" : "JSON::PP version 2.27400_02",
    "x_static_install" : 1
 }

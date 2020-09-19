@@ -1,14 +1,24 @@
 # NAME
 
-App::findeps - It's new $module
+App::findeps - the Module to find dependencies for files you've selected
 
 # SYNOPSIS
 
-    use App::findeps;
+Via the command-line program [findeps](https://metacpan.org/pod/findeps);
+
+    $ findeps Plack.psgi | cpanm
+    $ findeps index.cgi | cpanm
+    $ findeps t/00_compile.t | cpanm
 
 # DESCRIPTION
 
-App::findeps is ...
+App::findeps is base module for executing [findeps](https://metacpan.org/pod/findeps)
+
+# TODO
+
+    $ findeps Some::Module -makeCpanfile > cpanfile
+
+it will be useful to make some safe modules
 
 # LICENSE
 
@@ -19,4 +29,4 @@ it under the same terms as Perl itself.
 
 # AUTHOR
 
-worthmine <worthmine@gmail.com>
+Yuki Yoshida([worthmine](https://github.com/worthmine))
