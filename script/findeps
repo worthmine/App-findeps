@@ -1,0 +1,46 @@
+#!/usr/bin/env perl
+
+use 5.012_001;
+use strict;
+use warnings;
+use feature qw(say);
+our $VERSION = "0.01";
+use lib 'lib';
+
+use App::findeps;
+use Getopt::Long;
+my $usage = "Usage: $0 FILE | cpanm\n";
+
+my %opts;
+GetOptions( \%opts, "l|latest", ) or die $usage;
+
+my $install_latest = $opts{l} || 0;
+
+die $usage unless @ARGV;
+
+my @files = @ARGV;
+my $map   = App::findeps::scan( files => \@files );
+
+my @list = ();
+foreach my $key ( sort keys %$map ) {
+    next if $key =~ /\.pl$/;
+    my $version = $map->{$key};
+    my $name    = _name($key);
+    my $dist    = $name;
+    warn $dist .= '~' . $version if $version and $version ne 'required';
+    push @list, $dist;
+}
+
+die "No modules is to be installed\n" unless @list;
+
+say $_ for @list;
+
+exit;
+
+sub _name {
+    my $str = shift;
+    $str =~ s!/!::!g;
+    $str =~ s!.pm$!!i;
+    $str =~ s!^auto::(.+)::.*!$1!;
+    return $str;
+}
