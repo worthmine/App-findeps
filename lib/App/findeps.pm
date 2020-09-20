@@ -12,6 +12,7 @@ use List::Util qw(first);
 
 my $RE    = qr/\w+\.((?i:p[ml]|t|cgi|psgi))$/;
 my @local = find( sub { $_[0] and $_[0] =~ /\.p[ml]$/ }, 'lib' );
+our $Stable = 0;
 
 sub scan {
     my %args = @_;
@@ -28,7 +29,8 @@ sub scan {
             my ( $name, $version ) = scan_line($_);
             next if !defined $name;
             next if first { $_ =~ /$name.p[ml]/io } @local;
-            $deps->{$name} = $version unless defined $version;
+
+            $deps->{$name} = $version if !defined $version;
         }
         close $fh;
     }
@@ -54,14 +56,19 @@ sub scan_line {
     # use\s+(?:base|parent)\s+qw[\("'{](?:\s*([^'"\);]+))\s*[\)"'}]
     my $name = $2;
     return if $name =~ /^5/;
-    return if first { $_ eq $name } @pragmas;
+    return if first { $name eq $_ } @pragmas;
 
+    return get_version($name);
+}
+
+sub get_version {
+    my $name      = shift;
     my $installed = ExtUtils::Installed->new( skip_cwd => 1 );
     my $module    = first { $_ eq $name } $installed->modules();
     my $version   = eval { $installed->version($module) } || undef;
-    return ( $name, "$version" )     if $version;
-    return ( $name, $version || '' ) if $name =~ /\.p[lm]$/;
-    $version = eval "no strict 'subs';require $name;\$${name}::VERSION";
+    return ( $name, "$version" ) if $version;
+    eval "require $name" or return ($name);
+    $version = eval "no strict 'subs';\$${name}::VERSION" || 0;
     return ( $name, $version );
 }
 

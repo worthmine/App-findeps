@@ -9,11 +9,7 @@ use lib 'lib';
 use App::findeps;
 use Getopt::Long;
 my $usage = "Usage: $0 FILE | cpanm\n";
-
-my %opts;
-GetOptions( \%opts, "l|latest", ) or die $usage;
-
-my $install_latest = $opts{l} || 0;
+GetOptions( "s|stable" => \$App::findeps::Stable ) or die $usage;
 
 die $usage unless @ARGV;
 
@@ -26,7 +22,8 @@ foreach my $key ( sort keys %$map ) {
     my $version = $map->{$key};
     my $name    = _name($key);
     my $dist    = $name;
-    warn $dist .= '~' . $version if $version and $version ne 'required';
+    my $dlmt    = $App::findeps::Stable ? '@' : '~';
+    $dist .= "$dlmt$version" if length $version;
     push @list, $dist;
 }
 
