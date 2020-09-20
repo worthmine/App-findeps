@@ -22,8 +22,7 @@ foreach my $key ( sort keys %$map ) {
     my $version = $map->{$key};
     my $name    = _name($key);
     my $dist    = $name;
-    my $dlmt    = $App::findeps::Stable ? '@' : '~';
-    $dist .= "$dlmt$version" if length $version;
+    $dist .= "~$version" if length $version;
     push @list, $dist;
 }
 

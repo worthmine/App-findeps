@@ -16,7 +16,7 @@ our $Stable = 0;
 
 sub scan {
     my %args = @_;
-    my $deps = {};
+    my %pairs;
     while ( my $file = shift @{ $args{files} } ) {
         $file =~ $RE;
         my $ext = $1 || croak 'Unvalid extension was set';
@@ -26,13 +26,16 @@ sub scan {
             next unless length $_;
             last if /^__(?:END|DATA)__$/;
             next if /^\s*#.*$/;
-            my ( $name, $version ) = scan_line($_);
-            next if !defined $name;
-            next if first { $_ =~ /$name.p[ml]/io } @local;
-
-            $deps->{$name} = $version if !defined $version;
+            scan_line( \%pairs, $_ );
         }
         close $fh;
+    }
+    my $deps = {};
+    while ( my ( $name, $version ) = each %pairs ) {
+        next                      if !defined $name;
+        next                      if exists $deps->{$name};
+        next                      if first { $_ =~ /$name.p[ml]/io } @local;
+        $deps->{$name} = $version if !defined $version or $Stable;
     }
     return $deps;
 }
@@ -50,26 +53,34 @@ my @pragmas = qw(
 );
 
 sub scan_line {
+    my $pairs = shift;
     local $_ = shift;
-    return unless /(?:use\s*(?:base|parent|autouse)?|require)\s+(['"]?)([^'"\s;]+)\1/o;
 
-    # use\s+(?:base|parent)\s+qw[\("'{](?:\s*([^'"\);]+))\s*[\)"'}]
-    my $name = $2;
-    return if $name =~ /^5/;
-    return if first { $name eq $_ } @pragmas;
-
-    return get_version($name);
+    #return unless /(?:use(?:\s+base|\s+parent|\s+autouse)?|require)\s+(['"]?)([^'"\s;]+)\1/o;
+    my @names = ();
+    if (/use\s+(?:base|parent)\s+qw[\("'{](?:\s*([^'"\);]+))\s*[\)"'}]/) {
+        push @names, split / /, $1;
+    } elsif (/(?:use(?:\s+base|\s+parent|\s+autouse)?|require)\s+(['"]?)([^'"\s;]+)\1/o) {
+        push @names, $2;
+    }
+    for my $name (@names) {
+        next unless length $name;
+        next if exists $pairs->{$name};
+        next if $name =~ /^5/;
+        next if first { $name eq $_ } @pragmas;
+        $pairs->{$name} = get_version($name);
+    }
+    return %$pairs;
 }
 
 sub get_version {
     my $name      = shift;
     my $installed = ExtUtils::Installed->new( skip_cwd => 1 );
     my $module    = first { $_ eq $name } $installed->modules();
-    my $version   = eval { $installed->version($module) } || undef;
-    return ( $name, "$version" ) if $version;
-    eval "require $name" or return ($name);
-    $version = eval "no strict 'subs';\$${name}::VERSION" || 0;
-    return ( $name, $version );
+    my $version   = eval { $installed->version($module) };
+    return "$version" if $version;
+    eval "require $name" or return undef;
+    return eval "no strict 'subs';\$${name}::VERSION" || 0;
 }
 
 1;
