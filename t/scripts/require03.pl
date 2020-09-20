@@ -9,6 +9,6 @@ our $VERSION = "0.01";
 
 use lib 't/lib';
 use Data::Dumper qw(Dumper);
-require "Dummy";    # is not exist
+require "Dummy";    # does not exist
 
 exit;

@@ -10,6 +10,6 @@ our $VERSION = "0.01";
 use lib 't/lib';
 use Data::Dumper qw(Dumper);
 require Encode;
-use Dummy qw(Dummy);    # is not exist
+use Dummy qw(Dummy);    # does not exist
 
 exit;
