@@ -7,7 +7,7 @@ use strict;
 use warnings;
 use feature qw(say);
 
-our $VERSION = "0.01";
+our $VERSION = "0.02";
 use List::Util qw(first);
 use FastGlob qw(glob);
 use Getopt::Long;
@@ -136,15 +136,23 @@ without installing them every time
 
 C<findeps> is a simple command line program for ready to run.
 
+=over
+
+=item -u --upgradeAll OPTION
+
  $ findeps -u index.cgi | cpanm
 
 tries to upgrade modules you've already installed  to the newest
+
+=item -L --myLib OPTION
 
  $ findeps -L=modules Plack.psgi | cpanm
 
 If you have a local directory named 'modules' not to be 'lib',
 you can choose it and the modules in there are ignored
 because you've already holden them.
+
+=back
 
 L<scandeps.pl> requires you to have L<CPANPLUS>, but this requires just only L<cpanm>.
 
