@@ -68,6 +68,7 @@ sub scan_line {
         next unless length $name;
         next if exists $pairs->{$name};
         next if $name =~ /^5/;
+        next if $neme eq 'Plack::Builder';
         next if first { $name eq $_ } @pragmas;
         $pairs->{$name} = get_version($name);
     }
