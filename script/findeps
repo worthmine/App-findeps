@@ -115,7 +115,7 @@ __END__
 
 =head1 NAME
 
-findeps - A command-line tool that resolves dependencies from modules
+findeps - A command-line tool that resolves dependencies from Perl modules
 
 =head1 SYNOPSIS
 
@@ -134,17 +134,26 @@ without installing them every time
 
 =head1 DESCRIPTION
 
-findeps is a simple command line program for ready to run.
+C<findeps> is a simple command line program for ready to run.
+
+ $ findeps -u index.cgi | cpanm
+
+tries to upgrade modules you've already installed  to the newest
+
+ $ findeps -L=modules Plack.psgi | cpanm
+
+If you have a local directory named 'modules' not to be 'lib',
+you can choose it and the modules in there are ignored
+because you've already holden them.
 
 L<scandeps.pl> requires you to have L<CPANPLUS>, but this requires just only L<cpanm>.
 
-=head1 DANGER OPTION
+=head1 DANGEROUS OPTION
 
     $ findeps --makeCpanfile Some::Module >| cpanfile
 
-it may be useful when you build a new module with L<Minilla>
+It may be useful when you build a new module with L<Minilla>
 but B<NOT recommend>
-
 
 =head1 LICENSE
 

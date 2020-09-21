@@ -1,19 +1,53 @@
 [![Build Status](https://travis-ci.com/worthmine/App-findeps.svg?branch=master)](https://travis-ci.com/worthmine/App-findeps)
 # NAME
 
-App::findeps - the Module to find dependencies for files you've selected
+findeps - A command-line tool that resolves dependencies from Perl modules
 
 # SYNOPSIS
 
-Via the command-line program [findeps](https://metacpan.org/pod/findeps);
+just run like below:
 
-    $ findeps Plack.psgi | cpanm
-    $ findeps index.cgi | cpanm
-    $ findeps t/00_compile.t | cpanm
+```
+$ findeps your_product.pl | cpanm
+$ findeps Plack.psgi | cpanm
+$ findeps index.cgi | cpanm
+$ findeps t/00_compile.t | cpanm
+
+And on your modules directory
+$ findeps Your::Module | cpanm
+```
+
+Now you're ready to run the product you've made with many modules
+without installing them every time
 
 # DESCRIPTION
 
-App::findeps is base module for executing [findeps](https://metacpan.org/pod/findeps)
+`findeps` is a simple command line program for ready to run.
+
+```
+$ findeps -u index.cgi | cpanm
+```
+
+tries to upgrade modules you've already installed  to the newest
+
+```
+$ findeps -L=modules Plack.psgi | cpanm
+```
+
+If you have a local directory named 'modules' not to be 'lib',
+you can choose it and the modules in there are ignored
+because you've already holden them.
+
+[scandeps.pl](https://metacpan.org/pod/scandeps.pl) requires you to have [CPANPLUS](https://metacpan.org/pod/CPANPLUS), but this requires just only [cpanm](https://metacpan.org/pod/cpanm).
+
+# DANGEROUS OPTION
+
+```
+$ findeps --makeCpanfile Some::Module >| cpanfile
+```
+
+It may be useful when you build a new module with [Minilla](https://metacpan.org/pod/Minilla)
+but **NOT recommend**
 
 # LICENSE
 
