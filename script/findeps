@@ -134,6 +134,10 @@ without installing them every single time
 
 C<findeps> is a command line tool that resolves dependencies from too many Perl modules
 
+L<scandeps.pl> requires you to have L<CPANPLUS>, but this requires just only L<cpanm>.
+
+I think that is a small reinvention.
+
 =over
 
 =item -u --upgradeAll OPTION
@@ -151,8 +155,6 @@ you can choose it and the modules in there are ignored
 because you've already holden them.
 
 =back
-
-L<scandeps.pl> requires you to have L<CPANPLUS>, but this requires just only L<cpanm>.
 
 =head1 DANGEROUS OPTION
 
