@@ -106,6 +106,12 @@ Via the command-line program L<findeps>;
 
 App::findeps is a base module for executing L<findeps>
 
+=head1 TODO
+
+L<Plack::Builder> import modules C<Plack::Middleware::*> with C<enable>
+but it's not supported yet.
+
+
 =head1 SEE ALSO
 
 L<findeps>

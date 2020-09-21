@@ -15,6 +15,11 @@ Via the command-line program [findeps](https://metacpan.org/pod/findeps);
 
 App::findeps is a base module for executing [findeps](https://metacpan.org/pod/findeps)
 
+# TODO
+
+[Plack::Builder](https://metacpan.org/pod/Plack%3A%3ABuilder) import modules `Plack::Middleware::*` with `enable`
+but it's not supported yet.
+
 # SEE ALSO
 
 [findeps](https://metacpan.org/pod/findeps)
