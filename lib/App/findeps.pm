@@ -10,8 +10,8 @@ use ExtUtils::Installed;
 use List::Util qw(first);
 use FastGlob qw(glob);
 
-our $Stable = 0;
-our $myLib  = 'lib';
+our $Upgrade = 0;
+our $myLib   = 'lib';
 
 my $RE = qr/\w+\.((?i:p[ml]|t|cgi|psgi))$/;
 
@@ -37,7 +37,7 @@ sub scan {
         next                      if !defined $name;
         next                      if exists $deps->{$name};
         next                      if first { $_ =~ /$name\.p[lm]$/ } @local;
-        $deps->{$name} = $version if !defined $version or $Stable;
+        $deps->{$name} = $version if !defined $version or $Upgrade;
     }
     return $deps;
 }

@@ -8,10 +8,17 @@ our $VERSION = "0.01";
 use lib 'lib';
 use App::findeps;
 use Getopt::Long;
-my $usage = "Usage: $0 FILE | cpanm\n";
+my $usage = <<"EOL";
+Usage: $0 [ -s ] [ -L yourlib ] FILE | cpanm
+  -u | --upgradeAll : set it if you want to upgrade your dependencies
+  -L | --myLib      : defaults to 'lib'
+
+EOL
+my $makeCpanfile = 0;
 GetOptions(
-    "s|stable"  => \$App::findeps::Stable,
-    "L|myLib=s" => \$App::findeps::myLib,
+    "u|upgradeAll"   => \$App::findeps::Upgrade,
+    "L|myLib=s"      => \$App::findeps::myLib,
+    "m|makeCpanfile" => \$makeCpanfile,
 ) or die $usage;
 
 die $usage unless @ARGV;
