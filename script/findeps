@@ -65,7 +65,7 @@ sub makeCpanfile {
     my ( @require, @test_require );
     push @require, make_line($_) for @list;
     for my $test ( scan( &glob('t/*.t') ) ) {
-        push @test_require, make_line($test) unless first { $test eq $_ } @list;
+        push @test_require, make_line($test) unless first { $test eq $_ } @list, $file;
     }
     local $" = "";
     print <<"EOL";
@@ -74,7 +74,7 @@ requires 'perl', '5.012001';
 @require
 EOL
     local $" = "    ";
-    say <<"EOL" if @test_require;
+    print <<"EOL" if @test_require;
 on 'test' => sub {
     @test_require};
 EOL
