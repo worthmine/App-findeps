@@ -56,8 +56,9 @@ sub scan {
 sub makeCpanfile {
     die 'Too many Arguments' if @_ > 1;
     my $file = shift;
+    my $name = _name($file);
     if ( $file =~ /::/ ) {
-        $file = _name($file);
+        $file = $name;
         $file =~ s!::!/!g;
         $file = "lib/$file.pm";
     }
@@ -65,7 +66,7 @@ sub makeCpanfile {
     my ( @require, @test_require );
     push @require, make_line($_) for @list;
     for my $test ( scan( &glob('t/*.t') ) ) {
-        push @test_require, make_line($test) unless first { $test eq $_ } @list, $file;
+        push @test_require, make_line($test) unless first { $test =~ /^$_/ } @list, $name;
     }
     local $" = "";
     print <<"EOL";
@@ -95,6 +96,7 @@ sub make_line {
 sub _name {
     my $str = shift;
     $str =~ s!/!::!g;
+    $str =~ s!^lib::!!;
     $str =~ s!.pm$!!i;
     $str =~ s!^auto::(.+)::.*!$1!;
     return $str;
