@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 
-use 5.012_001;
-my $pVer = version->parse('5.012_001');
+use 5.012_005;
+my $pVer = version->parse('5.012_005');
 
 use strict;
 use warnings;
