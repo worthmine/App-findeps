@@ -7,7 +7,7 @@ use strict;
 use warnings;
 use feature qw(say);
 
-our $VERSION = "0.02";
+our $VERSION = "0.03";
 use List::Util qw(first);
 use FastGlob qw(glob);
 use Getopt::Long;
@@ -115,26 +115,24 @@ __END__
 
 =head1 NAME
 
-findeps - A command-line tool that resolves dependencies from Perl modules
+findeps - A simple command-line tool that makes ready to run Perl script on any environment
 
 =head1 SYNOPSIS
-
-just run like below:
 
  $ findeps your_product.pl | cpanm
  $ findeps Plack.psgi | cpanm
  $ findeps index.cgi | cpanm
  $ findeps t/00_compile.t | cpanm
  
- And on your modules directory
+ #On directory of the modules you made
  $ findeps Your::Module | cpanm
 
 Now you're ready to run the product you've made with many modules
-without installing them every time
+without installing them every single time
 
 =head1 DESCRIPTION
 
-C<findeps> is a simple command line program for ready to run.
+C<findeps> is a command line tool that resolves dependencies from too many Perl modules
 
 =over
 
@@ -142,7 +140,7 @@ C<findeps> is a simple command line program for ready to run.
 
  $ findeps -u index.cgi | cpanm
 
-tries to upgrade modules you've already installed  to the newest
+tries to upgrade modules you've already installed to the newest
 
 =item -L --myLib OPTION
 
@@ -158,10 +156,20 @@ L<scandeps.pl> requires you to have L<CPANPLUS>, but this requires just only L<c
 
 =head1 DANGEROUS OPTION
 
-    $ findeps --makeCpanfile Some::Module >| cpanfile
+  $ findeps --makeCpanfile Some::Module >| cpanfile
 
 It may be useful when you build a new module with L<Minilla>
-but B<NOT recommend>
+but B<NOT recommended> yet
+
+=head1 SEE ALSO
+
+=over
+
+=item L<cpanm>
+
+=item L<scandeps.pl>
+
+=back
 
 =head1 LICENSE
 

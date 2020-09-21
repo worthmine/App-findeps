@@ -3,7 +3,7 @@ use 5.012_001;
 use strict;
 use warnings;
 
-our $VERSION = "0.02";
+our $VERSION = "0.03";
 
 use Carp qw(carp croak);
 use ExtUtils::Installed;
@@ -104,7 +104,11 @@ Via the command-line program L<findeps>;
 
 =head1 DESCRIPTION
 
-App::findeps is base module for executing L<findeps>
+App::findeps is a base module for executing L<findeps>
+
+=head1 SEE ALSO
+
+L<findeps>
 
 =head1 LICENSE
 
@@ -118,4 +122,3 @@ it under the same terms as Perl itself.
 Yuki Yoshida(L<worthmine|https://github.com/worthmine>)
 
 =cut
-

@@ -13,7 +13,11 @@ Via the command-line program [findeps](https://metacpan.org/pod/findeps);
 
 # DESCRIPTION
 
-App::findeps is base module for executing [findeps](https://metacpan.org/pod/findeps)
+App::findeps is a base module for executing [findeps](https://metacpan.org/pod/findeps)
+
+# SEE ALSO
+
+[findeps](https://metacpan.org/pod/findeps)
 
 # LICENSE
 
