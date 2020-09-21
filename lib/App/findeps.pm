@@ -1,5 +1,6 @@
 package App::findeps;
-use 5.012_001;
+
+use 5.012005;
 use strict;
 use warnings;
 

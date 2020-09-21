@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 
-use 5.012_005;
-my $pVer = version->parse('5.012_005');
+use 5.012005;
+my $pVer = version->parse('5.012005');
 
 use strict;
 use warnings;
@@ -15,10 +15,11 @@ use version 0.77;
 
 use lib 'lib';
 use App::findeps;
-
-my $usage = <<"EOL";
-Usage: $0 [ -s ] [ -L yourlib ] FILE | cpanm
-  -u | --upgradeAll : set it if you want to upgrade your dependencies
+use File::Basename qw(basename);
+my $scriptName = basename($0);
+my $usage      = <<"EOL";
+Usage: $scriptName [ -u ] [ -L yourlib ] FILE | cpanm
+  -u | --upgradeAll : flag it if you want to upgrade your dependencies
   -L | --myLib      : defaults to 'lib'
 
 EOL
@@ -87,10 +88,10 @@ sub make_line {
     my ( $name, $version ) = split '~', shift;
     my $res = qx"corelist $name";
     $version = $version ? ", '$version'" : '';
-    $res =~ /5.(\d+)/;
+    $res =~ /(5.\d+)/;
     return "requires '$name'$version;\n"
-        if $res =~ /$name was not in CORE/
-        or $1 and version->parse($1) > $pVer;
+        if $1 and version->parse($1) > $pVer
+        or $res =~ /$name was not in CORE/;
     return;
 }
 

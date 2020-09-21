@@ -4,7 +4,7 @@
       "Yuki Yoshida(L<worthmine|https://github.com/worthmine>)"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Minilla/v3.1.10, CPAN::Meta::Converter version 2.150010",
+   "generated_by" : "Minilla/v3.1.11, CPAN::Meta::Converter version 2.150010",
    "license" : [
       "perl_5"
    ],
@@ -44,7 +44,7 @@
          "requires" : {
             "FastGlob" : "1.5",
             "List::Util" : "1.55",
-            "perl" : "5.012001"
+            "perl" : "5.012005"
          }
       },
       "test" : {
