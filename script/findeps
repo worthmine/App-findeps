@@ -43,8 +43,9 @@ exit;
 
 sub scan {
     my @files = @_;
-    my $map   = App::findeps::scan( files => \@files );
-    my @list  = ();
+    @files = map { /::/ ? getModuleName($_) : $_ } @files;
+    my $map  = App::findeps::scan( files => \@files );
+    my @list = ();
     foreach my $key ( sort keys %$map ) {
         next if $key =~ /\.pl$/;
         my $version = $map->{$key};
@@ -60,14 +61,11 @@ sub makeCpanfile {
     die 'Too many Arguments' if @_ > 1;
     my $file = shift;
     my $name = _name($file);
-    if ( $file =~ /::/ ) {
-        $file = $name;
-        $file =~ s!::!/!g;
-        $file = "lib/$file.pm";
-    }
+    $file = getModuleName($name) if $file =~ /::/;
     my @list = scan($file);
     my ( @require, @test_require );
     push @require, make_line($_) for @list;
+
     for my $test ( scan( &glob('t/*.t') ) ) {
         push @test_require, make_line($test) unless first { $test =~ /^$_/ } @list, $name;
     }
@@ -96,6 +94,12 @@ sub make_line {
     return;
 }
 
+sub getModuleName {
+    shift;
+    s!::!/!g;
+    "lib/$_.pm";
+}
+
 sub _name {
     my $str = shift;
     $str =~ s!/!::!g;
@@ -121,8 +125,11 @@ just run like below:
  $ findeps Plack.psgi | cpanm
  $ findeps index.cgi | cpanm
  $ findeps t/00_compile.t | cpanm
+ 
+ And on your modules directory
+ $ findeps Your::Module | cpanm
 
-Now you can run the product you've made with many modules
+Now you're ready to run the product you've made with many modules
 without installing them every time
 
 =head1 DESCRIPTION
@@ -133,9 +140,9 @@ L<scandeps.pl> requires you to have L<CPANPLUS>, but this requires just only L<c
 
 =head1 DANGER OPTION
 
-    $ findeps  --makeCpanfile Some::Module >| cpanfile
+    $ findeps --makeCpanfile Some::Module >| cpanfile
 
-it may be useful when you build a new module with Minilla
+it may be useful when you build a new module with L<Minilla>
 but B<NOT recommend>
 
 
