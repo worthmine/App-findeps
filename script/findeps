@@ -43,7 +43,7 @@ exit;
 
 sub scan {
     my @files = @_;
-    @files = map { /::/ ? getModuleName($_) : $_ } @files;
+    @files = map { /::/ ? _getPath($_) : $_ } @files;
     my $map  = App::findeps::scan( files => \@files );
     my @list = ();
     foreach my $key ( sort keys %$map ) {
@@ -61,7 +61,7 @@ sub makeCpanfile {
     die 'Too many Arguments' if @_ > 1;
     my $file = shift;
     my $name = _name($file);
-    $file = getModuleName($name) if $file =~ /::/;
+    $file = _getPath($name) if $file =~ /::/;
     my @list = scan($file);
     my ( @require, @test_require );
     push @require, make_line($_) for @list;
@@ -94,8 +94,8 @@ sub make_line {
     return;
 }
 
-sub getModuleName {
-    shift;
+sub _getPath {
+    local $_ = shift;
     s!::!/!g;
     "lib/$_.pm";
 }
