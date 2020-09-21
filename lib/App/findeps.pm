@@ -10,9 +10,9 @@ use ExtUtils::Installed;
 use List::Util qw(first);
 use FastGlob qw(glob);
 
-our $Upgrade = 0;
-our $myLib   = 'lib';
-
+our $Upgrade    = 0;
+our $myLib      = 'lib';
+our $toCpanfile = 0;
 my $RE = qr/\w+\.((?i:p[ml]|t|cgi|psgi))$/;
 
 sub scan {
@@ -37,7 +37,7 @@ sub scan {
         next                      if !defined $name;
         next                      if exists $deps->{$name};
         next                      if first { $_ =~ /$name\.p[lm]$/ } @local;
-        $deps->{$name} = $version if !defined $version or $Upgrade;
+        $deps->{$name} = $version if !defined $version or $Upgrade or $toCpanfile;
     }
     return $deps;
 }
@@ -57,9 +57,8 @@ my @pragmas = qw(
 sub scan_line {
     my $pairs = shift;
     local $_ = shift;
-
-    #return unless /(?:use(?:\s+base|\s+parent|\s+autouse)?|require)\s+(['"]?)([^'"\s;]+)\1/o;
     my @names = ();
+    return if /eval/;
     if (/use\s+(?:base|parent)\s+qw[\("'{](?:\s*([^'"\);]+))\s*[\)"'}]/) {
         push @names, split / /, $1;
     } elsif (/(?:use(?:\s+base|\s+parent|\s+autouse)?|require)\s+(['"]?)([^'"\s;]+)\1/o) {

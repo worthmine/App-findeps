@@ -4,43 +4,54 @@ use 5.012_001;
 use strict;
 use warnings;
 use feature qw(say);
+
 our $VERSION = "0.01";
+use List::Util qw(first);
+use FastGlob qw(glob);
+use Getopt::Long;
+
 use lib 'lib';
 use App::findeps;
-use Getopt::Long;
+
 my $usage = <<"EOL";
 Usage: $0 [ -s ] [ -L yourlib ] FILE | cpanm
   -u | --upgradeAll : set it if you want to upgrade your dependencies
   -L | --myLib      : defaults to 'lib'
 
 EOL
-my $makeCpanfile = 0;
+
 GetOptions(
     "u|upgradeAll"   => \$App::findeps::Upgrade,
     "L|myLib=s"      => \$App::findeps::myLib,
-    "m|makeCpanfile" => \$makeCpanfile,
+    "m|makeCpanfile" => \$App::findeps::toCpanfile,
 ) or die $usage;
 
 die $usage unless @ARGV;
 
-my @files = @ARGV;
-my $map   = App::findeps::scan( files => \@files );
+my @list = scan(@ARGV);
 
-my @list = ();
-foreach my $key ( sort keys %$map ) {
-    next if $key =~ /\.pl$/;
-    my $version = $map->{$key};
-    my $name    = _name($key);
-    my $dist    = $name;
-    $dist .= "~$version" if length $version;
-    push @list, $dist;
-}
-
+makeCpanfile(@list) if $App::findeps::toCpanfile;
 die "Ready to run @ARGV\n" unless @list;
 
 say $_ for @list;
 
 exit;
+
+sub scan {
+    my @files = @_;
+    my $map   = App::findeps::scan( files => \@files );
+
+    my @list = ();
+    foreach my $key ( sort keys %$map ) {
+        next if $key =~ /\.pl$/;
+        my $version = $map->{$key};
+        my $name    = _name($key);
+        my $dist    = $name;
+        $dist .= "~$version" if length $version;
+        push @list, $dist;
+    }
+    return @list;
+}
 
 sub _name {
     my $str = shift;
@@ -48,6 +59,36 @@ sub _name {
     $str =~ s!.pm$!!i;
     $str =~ s!^auto::(.+)::.*!$1!;
     return $str;
+}
+
+sub makeCpanfile {
+    my ( @require, @test_require );
+    push @require, make_line($_) for @_;
+    for my $test ( scan( glob('./t/*.t') ) ) {
+        push @test_require, make_line($test) unless first { $test eq $_ } @_;
+    }
+    local $" = "";
+    print <<"EOL";
+requires 'perl', '5.012001'
+
+@require
+EOL
+    local $" = "    ";
+    say <<"EOL" if @test_require;
+on 'test' => sub {
+    @test_require};
+EOL
+    exit;
+}
+
+sub make_line {
+    my ( $name, $version ) = split '~', shift;
+    my $res = qx"corelist $name";
+    $res =~ /5.(\d+)/;
+    return "requires '$name', '$version';\n"
+        if $res =~ /$name was not in CORE/
+        or $1 and $1 gt '5.012001';
+    return;
 }
 
 __END__
