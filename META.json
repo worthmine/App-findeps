@@ -50,6 +50,7 @@
       },
       "test" : {
          "requires" : {
+            "FastGlob" : "1.5",
             "Test::More" : "0.98"
          }
       }

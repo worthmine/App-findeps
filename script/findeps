@@ -9,7 +9,10 @@ use lib 'lib';
 use App::findeps;
 use Getopt::Long;
 my $usage = "Usage: $0 FILE | cpanm\n";
-GetOptions( "s|stable" => \$App::findeps::Stable ) or die $usage;
+GetOptions(
+    "s|stable"   => \$App::findeps::Stable,
+    "L|myLib=s@" => \$App::findeps::myLib,
+) or die $usage;
 
 die $usage unless @ARGV;
 

@@ -10,9 +10,12 @@ use File::Find qw(find);
 use ExtUtils::Installed;
 use List::Util qw(first);
 
-my $RE    = qr/\w+\.((?i:p[ml]|t|cgi|psgi))$/;
-my @local = find( sub { $_[0] and $_[0] =~ /\.p[ml]$/ }, 'lib' );
 our $Stable = 0;
+our $myLib  = [];
+
+my $RE = qr/\w+\.((?i:p[ml]|t|cgi|psgi))$/;
+
+my @local = find( sub { $_[0] and $_[0] =~ /\.p[ml]$/ }, 'lib' );
 
 sub scan {
     my %args = @_;
@@ -31,16 +34,24 @@ sub scan {
         close $fh;
     }
     my $deps = {};
+    resetLocalLib() if @$myLib;
     while ( my ( $name, $version ) = each %pairs ) {
         next                      if !defined $name;
         next                      if exists $deps->{$name};
-        next                      if first { $_ =~ /$name.p[ml]/io } @local;
+        next                      if first { $_ =~ /$name\.p[lm]$/ } @local;
         $deps->{$name} = $version if !defined $version or $Stable;
     }
     return $deps;
 }
 
 # subroutines #----#----#----#----#----#----#----#----#----#----#----#----#
+sub resetLocalLib {
+    my @lib = find( sub { $_[0] and $_[0] =~ /\.p[lm]$/ }, @$myLib );
+    for my $name (@lib) {
+        @local = grep { $name ne $_ } @local;
+    }
+}
+
 my @pragmas = qw(
     attributes autodie autouse
     base bigint bignum bigrat blib bytes

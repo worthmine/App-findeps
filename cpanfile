@@ -6,5 +6,6 @@ requires 'ExtUtils::Installed', '2.18';
 
 on 'test' => sub {
     requires 'Test::More', '0.98';
+    requires 'FastGlob',   '1.5';
 };
 

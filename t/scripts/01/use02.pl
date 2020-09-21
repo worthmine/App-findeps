@@ -7,9 +7,8 @@ use feature qw(say);
 
 our $VERSION = "0.01";
 
-use lib 't/lib';
 use Data::Dumper qw(Dumper);
 require Encode;
-use base 'Dummy';    # does not exist
+use Dummy qw(Dummy);    # does not exist
 
 exit;

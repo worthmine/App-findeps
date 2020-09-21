@@ -7,8 +7,9 @@ use feature qw(say);
 
 our $VERSION = "0.01";
 
-use lib 't/lib';
 use Data::Dumper qw(Dumper);
-require 'Dummy';    # does not exist
+
+# require CommentOuted; # will be ignored
+require Dummy;    # does not exist
 
 exit;
