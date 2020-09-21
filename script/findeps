@@ -64,7 +64,7 @@ sub _name {
 sub makeCpanfile {
     my ( @require, @test_require );
     push @require, make_line($_) for @_;
-    for my $test ( scan( glob('./t/*.t') ) ) {
+    for my $test ( scan( &glob('./t/*.t') ) ) {
         push @test_require, make_line($test) unless first { $test eq $_ } @_;
     }
     local $" = "";
