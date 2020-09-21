@@ -17,9 +17,9 @@ App::findeps is base module for executing [findeps](https://metacpan.org/pod/fin
 
 # TODO
 
-    $ findeps Some::Module -makeCpanfile > cpanfile
+    $ findeps Some::Module -makeCpanfile >| cpanfile
 
-it will be useful to make some safe modules
+it may be useful to make some safe modules with Minilla
 
 # LICENSE
 

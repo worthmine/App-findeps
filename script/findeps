@@ -28,9 +28,10 @@ GetOptions(
 
 die $usage unless @ARGV;
 
+makeCpanfile(@ARGV) if $App::findeps::toCpanfile;
+
 my @list = scan(@ARGV);
 
-makeCpanfile(@list) if $App::findeps::toCpanfile;
 die "Ready to run @ARGV\n" unless @list;
 
 say $_ for @list;
@@ -40,8 +41,7 @@ exit;
 sub scan {
     my @files = @_;
     my $map   = App::findeps::scan( files => \@files );
-
-    my @list = ();
+    my @list  = ();
     foreach my $key ( sort keys %$map ) {
         next if $key =~ /\.pl$/;
         my $version = $map->{$key};
@@ -53,23 +53,23 @@ sub scan {
     return @list;
 }
 
-sub _name {
-    my $str = shift;
-    $str =~ s!/!::!g;
-    $str =~ s!.pm$!!i;
-    $str =~ s!^auto::(.+)::.*!$1!;
-    return $str;
-}
-
 sub makeCpanfile {
+    die 'Too many Arguments' if @_ > 1;
+    my $file = shift;
+    if ( $file =~ /::/ ) {
+        $file = _name($file);
+        $file =~ s!::!/!g;
+        $file = "lib/$file.pm";
+    }
+    my @list = scan($file);
     my ( @require, @test_require );
-    push @require, make_line($_) for @_;
-    for my $test ( scan( &glob('./t/*.t') ) ) {
-        push @test_require, make_line($test) unless first { $test eq $_ } @_;
+    push @require, make_line($_) for @list;
+    for my $test ( scan( &glob('t/*.t') ) ) {
+        push @test_require, make_line($test) unless first { $test eq $_ } @list;
     }
     local $" = "";
     print <<"EOL";
-requires 'perl', '5.012001'
+requires 'perl', '5.012001';
 
 @require
 EOL
@@ -84,11 +84,20 @@ EOL
 sub make_line {
     my ( $name, $version ) = split '~', shift;
     my $res = qx"corelist $name";
+    $version = $version ? ", '$version'" : '';
     $res =~ /5.(\d+)/;
-    return "requires '$name', '$version';\n"
+    return "requires '$name'$version;\n"
         if $res =~ /$name was not in CORE/
         or $1 and $1 gt '5.012001';
     return;
+}
+
+sub _name {
+    my $str = shift;
+    $str =~ s!/!::!g;
+    $str =~ s!.pm$!!i;
+    $str =~ s!^auto::(.+)::.*!$1!;
+    return $str;
 }
 
 __END__

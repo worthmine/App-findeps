@@ -42,7 +42,6 @@
       },
       "runtime" : {
          "requires" : {
-            "ExtUtils::Installed" : "2.18",
             "FastGlob" : "1.5",
             "List::Util" : "1.55",
             "perl" : "5.012001"
@@ -50,7 +49,7 @@
       },
       "test" : {
          "requires" : {
-            "Test::More" : "0.98"
+            "Test::More" : "1.302181"
          }
       }
    },

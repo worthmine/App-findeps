@@ -108,9 +108,9 @@ App::findeps is base module for executing L<findeps>
 
 =head1 TODO
 
-    $ findeps Some::Module -makeCpanfile > cpanfile
+    $ findeps Some::Module -makeCpanfile >| cpanfile
 
-it will be useful to make some safe modules
+it may be useful to make some safe modules with Minilla
 
 =head1 LICENSE
 
