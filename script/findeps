@@ -131,6 +131,14 @@ findeps is a simple command line program for ready to run.
 
 L<scandeps.pl> requires you to have L<CPANPLUS>, but this requires just only L<cpanm>.
 
+=head1 DANGER OPTION
+
+    $ findeps  --makeCpanfile Some::Module >| cpanfile
+
+it may be useful when you build a new module with Minilla
+but B<NOT recommend>
+
+
 =head1 LICENSE
 
 Copyright (C) worthmine.

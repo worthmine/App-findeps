@@ -15,12 +15,6 @@ Via the command-line program [findeps](https://metacpan.org/pod/findeps);
 
 App::findeps is base module for executing [findeps](https://metacpan.org/pod/findeps)
 
-# TODO
-
-    $ findeps Some::Module -makeCpanfile >| cpanfile
-
-it may be useful to make some safe modules with Minilla
-
 # LICENSE
 
 Copyright (C) worthmine.

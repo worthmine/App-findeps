@@ -106,12 +106,6 @@ Via the command-line program L<findeps>;
 
 App::findeps is base module for executing L<findeps>
 
-=head1 TODO
-
-    $ findeps Some::Module -makeCpanfile >| cpanfile
-
-it may be useful to make some safe modules with Minilla
-
 =head1 LICENSE
 
 Copyright (C) worthmine.
