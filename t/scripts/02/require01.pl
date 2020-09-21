@@ -11,5 +11,6 @@ use lib 't/lib';
 use Data::Dumper qw(Dumper);
 
 require Module;
+require Dummy;    # does not exist
 
 exit;

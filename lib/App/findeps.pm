@@ -6,9 +6,9 @@ use warnings;
 our $VERSION = "0.01";
 
 use Carp qw(carp croak);
-use File::Find qw(find);
 use ExtUtils::Installed;
 use List::Util qw(first);
+use FastGlob qw(glob);
 
 our $Stable = 0;
 our $myLib  = 'lib';
@@ -32,7 +32,7 @@ sub scan {
         close $fh;
     }
     my $deps  = {};
-    my @local = find( sub { $_[0] and $_[0] =~ /\.p[ml]$/ }, $myLib );
+    my @local = &glob("$myLib/*.p[lm]");
     while ( my ( $name, $version ) = each %pairs ) {
         next                      if !defined $name;
         next                      if exists $deps->{$name};
