@@ -65,7 +65,7 @@
          "web" : "https://github.com/worthmine/App-findeps"
       }
    },
-   "version" : "0.03",
+   "version" : "0.04",
    "x_authority" : "cpan:WORTHMINE",
    "x_contributors" : [
       "worthmine <worthmine@gmail.com>"
