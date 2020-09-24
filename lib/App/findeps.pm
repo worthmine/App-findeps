@@ -61,7 +61,7 @@ sub scan_line {
     my @names = ();
     return if /eval/;
     if (/use\s+(?:base|parent)\s+qw[\("'{](?:\s*([^'"\);]+))\s*[\)"'}]/) {
-        push @names, split / /, $1;
+        push @names, split /\s+/, $1;
     } elsif (/(?:use(?:\s+base|\s+parent|\s+autouse)?|require)\s+(['"]?)([^'"\s;]+)\1/o) {
         push @names, $2;
     }

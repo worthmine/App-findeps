@@ -19,8 +19,10 @@ use File::Basename qw(basename);
 my $scriptName = basename($0);
 my $usage      = <<"EOL";
 Usage: $scriptName [ -u ] [ -L yourlib ] FILE | cpanm
-  -u | --upgradeAll : flag it if you want to upgrade your dependencies
-  -L | --myLib      : defaults to 'lib'
+  -u | --upgradeAll         : flag it if you want to upgrade your dependencies
+  -L | --myLib [yourLib]    : designate directory name of your library.
+                            : then it will be excluding from detection.
+                            : defaults to 'lib'
 
 EOL
 
