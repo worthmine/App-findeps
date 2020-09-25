@@ -28,6 +28,14 @@ sub scan {
             next unless length $_;
             last if /^__(?:END|DATA)__$/;
             next if /^\s*#.*$/;
+            state $pod;
+            if ( !$pod and /^=(\w+)/ ) {
+                $pod = $1;
+            } elsif ( $pod and /^=cut$/ ) {
+                undef $pod;
+                next;
+            }
+            next if $pod;
             scan_line( \%pairs, $_ );
         }
         close $fh;
