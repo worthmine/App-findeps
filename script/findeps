@@ -1,6 +1,7 @@
 #!/usr/bin/env perl
 
 use 5.012005;
+use version 0.77;
 my $pVer = version->parse('5.012005');
 
 use strict;
@@ -11,7 +12,6 @@ our $VERSION = "0.04";
 use List::Util qw(first);
 use FastGlob qw(glob);
 use Getopt::Long;
-use version 0.77;
 
 use lib 'lib';
 use App::findeps;
