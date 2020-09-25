@@ -65,11 +65,13 @@ sub scan_line {
         push @names, split /\s+/, $1;
     } elsif (/(?:use(?:\s+base|\s+parent|\s+autouse)?|require)\s+(['"]?)([^'"\s;]+)\1/o) {
         push @names, $2;
+    } elsif (/eval\s+(?:"require\s+([^\s"]+)"|{require\s+([^\s"]+)\s*} )/) {
+        push @names, $1;
     }
     for my $name (@names) {
         next unless length $name;
         next if exists $pairs->{$name};
-        next if $name =~ /^5/;
+        next if $name =~ /^(?:5|\$)/;
         next if $name eq 'Plack::Builder';
         next if first { $name eq $_ } @pragmas;
         $pairs->{$name} = get_version($name);
