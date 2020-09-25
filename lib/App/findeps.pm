@@ -59,7 +59,8 @@ sub scan_line {
     my $pairs = shift;
     local $_ = shift;
     my @names = ();
-    return if /eval/;
+
+    #return if /eval/;
     if (/use\s+(?:base|parent)\s+qw[\("'{](?:\s*([^'"\);]+))\s*[\)"'}]/) {
         push @names, split /\s+/, $1;
     } elsif (/(?:use(?:\s+base|\s+parent|\s+autouse)?|require)\s+(['"]?)([^'"\s;]+)\1/o) {
