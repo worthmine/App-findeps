@@ -61,12 +61,13 @@ sub scan_line {
     my @names = ();
 
     #return if /eval/;
-    if (/use\s+(?:base|parent)\s+qw[\("'{](?:\s*([^'"\);]+))\s*[\)"'}]/) {
+    my $qr4name = qr/[a-z][a-z\d:]+/i;
+    if (/use\s+(?:base|parent)\s+qw[\("'{]\s*($qr4name)\s*[\)"'}]/) {
         push @names, split /\s+/, $1;
-    } elsif (/(?:use(?:\s+base|\s+parent|\s+autouse)?|require)\s+(['"]?)([^'"\s;]+)\1/o) {
+    } elsif (/(?:use(?:\s+base|\s+parent|\s+autouse)?|require)\s+(['"]?)($qr4name)\1/o) {
         push @names, $2;
-    } elsif (/eval\s+(?:"require\s+([^\s"]+)"|{require\s+([^\s"]+)\s*} )/) {
-        push @names, $1;
+    } elsif (/eval\s+(?:(['"])require\s+($qr4name)\1|{require\s+($qr4name)\s*} )/) {
+        push @names, $2;
     }
     for my $name (@names) {
         next unless length $name;
