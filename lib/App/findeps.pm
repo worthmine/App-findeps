@@ -65,8 +65,8 @@ sub scan_line {
         push @names, split /\s+/, $1;
     } elsif (/use\s+(?:base|parent|autouse)\s+(['"])?($qr4name)\1?/) {
         $names[0] = $2;
-    } elsif (/eval\s*(['"{])\s*(require|use)\s+($qr4name).*(?:\1|})/) {
-        warn "$3 is $2d inside of eval";
+    } elsif (/(eval|if)\s*(['"{])\s*(require|use)\s+($qr4name).*(?:\1|})/) {
+        warn "$4 is $3d inside of $1";
     } elsif (/^\s*(?:require|use)\s+($qr4name)/) {
         $names[0] = $1;
     } elsif (/^\s*require\s+(["'])($qr4name)\.p[lm]\1/) {
