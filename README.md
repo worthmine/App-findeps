@@ -17,8 +17,7 @@ App::findeps is a base module for executing [findeps](https://metacpan.org/pod/f
 
 # TODO
 
-[Plack::Builder](https://metacpan.org/pod/Plack%3A%3ABuilder) import modules `Plack::Middleware::*` with `enable`
-but it's not supported yet.
+is moved to [github issue](https://github.com/worthmine/App-findeps/issues)
 
 # SEE ALSO
 

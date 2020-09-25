@@ -116,9 +116,7 @@ App::findeps is a base module for executing L<findeps>
 
 =head1 TODO
 
-L<Plack::Builder> import modules C<Plack::Middleware::*> with C<enable>
-but it's not supported yet.
-
+is moved to L<github issue|https://github.com/worthmine/App-findeps/issues>
 
 =head1 SEE ALSO
 
