@@ -8,6 +8,6 @@ use feature qw(say);
 our $VERSION = "0.01";
 
 use Data::Dumper qw(Dumper);
-require 'Dummy';    # does not exist
+require 'Dummy.pm';    # does not exist
 
 exit;

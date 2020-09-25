@@ -58,16 +58,18 @@ my @pragmas = qw(
 sub scan_line {
     my $pairs = shift;
     local $_ = shift;
-    my @names = ();
-
-    #return if /eval/;
-    my $qr4name = qr/[a-z][a-z\d:]+/i;
-    if (/use\s+(?:base|parent)\s+qw[\("'{]\s*($qr4name)\s*[\)"'}]/) {
+    my @names   = ();
+    my $qr4name = qr/[a-zA-Z][a-zA-Z\d]+(?:\::\w+){0,}/;
+    if (/use\s+(?:base|parent)\s+qw[\("']\s*((?:$qr4name\s*){1,})[\)"']/) {
         push @names, split /\s+/, $1;
-    } elsif (/(?:use(?:\s+base|\s+parent|\s+autouse)?|require)\s+(['"]?)($qr4name)\1/o) {
-        push @names, $2;
-    } elsif (/eval\s+(?:(['"])require\s+($qr4name)\1|{require\s+($qr4name)\s*} )/) {
-        push @names, $2;
+    } elsif (/use\s+(?:base|parent|autouse)\s+(['"])?($qr4name)\1?/) {
+        $names[0] = $2;
+    } elsif (/eval\s+(['"{])\s*require\s+($qr4name).*(?:\1|})/) {
+        $names[0] = $2;
+    } elsif (/(?:require|use)\s+($qr4name)/) {
+        $names[0] = $1;
+    } elsif (/require\s+(["'])($qr4name)\.p[lm]\1/) {
+        $names[0] = $2;
     }
     for my $name (@names) {
         next unless length $name;
