@@ -10,6 +10,7 @@ our $VERSION = "0.01";
 use Data::Dumper qw(Dumper);
 
 # require CommentOuted; # will be ignored
-require Dummy;    # does not exist
+my $dummys = 1;    # require CommentOuted; # will be ignored
+require Dummy;     # does not exist
 
 exit;

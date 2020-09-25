@@ -58,23 +58,23 @@ my @pragmas = qw(
 sub scan_line {
     my $pairs = shift;
     local $_ = shift;
+    s/#.*$//;
     my @names   = ();
-    my $qr4name = qr/[a-zA-Z][a-zA-Z\d]+(?:\::\w+){0,}/;
+    my $qr4name = qr/[a-zA-Z][a-zA-Z\d]+(?:::\w+){0,}/;
     if (/use\s+(?:base|parent)\s+qw[\("']\s*((?:$qr4name\s*){1,})[\)"']/) {
         push @names, split /\s+/, $1;
     } elsif (/use\s+(?:base|parent|autouse)\s+(['"])?($qr4name)\1?/) {
         $names[0] = $2;
-    } elsif (/eval\s+(['"{])\s*require\s+($qr4name).*(?:\1|})/) {
+    } elsif (/eval\s*(['"{])\s*(?:require|use)\s+($qr4name).*(?:\1|})/) {
         $names[0] = $2;
-    } elsif (/(?:require|use)\s+($qr4name)/) {
+    } elsif (/^\s*(?:require|use)\s+($qr4name)/) {
         $names[0] = $1;
-    } elsif (/require\s+(["'])($qr4name)\.p[lm]\1/) {
+    } elsif (/^\s*require\s+(["'])($qr4name)\.p[lm]\1/) {
         $names[0] = $2;
     }
     for my $name (@names) {
         next unless length $name;
         next if exists $pairs->{$name};
-        next if $name =~ /^(?:5|\$)/;
         next if $name eq 'Plack::Builder';
         next if first { $name eq $_ } @pragmas;
         $pairs->{$name} = get_version($name);
