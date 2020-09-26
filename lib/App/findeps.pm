@@ -73,8 +73,12 @@ sub scan_line {
         push @names, split /\s+/, $1;
     } elsif (/use\s+(?:base|parent|autouse)\s+(['"])?($qr4name)\1?/) {
         $names[0] = $2;
-    } elsif (/(eval|if)\s*(['"{])\s*(require|use)\s+($qr4name).*(?:\1|})/) {
-        warn "$4 is $3d inside of $1";
+    } elsif (/(eval|if)\s*(['"{])\s*(require|use)\s+($qr4name).*(?:\2|})/) {
+        my ( $cmd, $name, $func ) = ( $1, $4, $3 );
+        my $res = qx"corelist -v5.012005 $name";
+        $res =~ /($name) was not in CORE/;
+        warn "$1 is ${func}d inside of $cmd" if $1;
+
     } elsif (/^\s*(?:require|use)\s+($qr4name)/) {
         $names[0] = $1;
     } elsif (/^\s*require\s+(["'])($qr4name)\.p[lm]\1/) {
