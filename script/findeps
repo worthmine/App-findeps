@@ -20,7 +20,7 @@ use File::Basename qw(basename);
 my $scriptName = basename($0);
 my $usage      = <<"EOL";
 Usage: $scriptName [ -u ] [ -L yourlib ] FILE | cpanm
-  -u | --upgradeAll         : flag it if you want to upgrade your dependencies
+  -u | --upgradeAll         : flag it if you want to upgrade all your dependencies
   -L | --myLib [yourLib]    : designate directory name of your library.
                             : then it will be excluding from detection.
                             : defaults to 'lib'
@@ -51,7 +51,8 @@ sub scan {
     my $map  = App::findeps::scan( files => \@files );
     my @list = ();
     foreach my $key ( sort keys %$map ) {
-        next if $key =~ /\.pl$/;
+
+        #next if $key =~ /\.pl$/;
         my $version = $map->{$key};
         my $name    = _name($key);
         my $dist    = $name;
