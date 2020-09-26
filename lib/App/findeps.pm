@@ -14,7 +14,8 @@ use FastGlob qw(glob);
 our $Upgrade    = 0;
 our $myLib      = 'lib';
 our $toCpanfile = 0;
-my $RE = qr/\w+\.((?i:p[ml]|t|cgi|psgi))$/;
+my $RE      = qr/\w+\.((?i:p[ml]|t|cgi|psgi))$/;
+my $qr4name = qr/[a-zA-Z][a-zA-Z\d]+(?:::\w+){0,}/;
 
 sub scan {
     my %args = @_;
@@ -31,17 +32,32 @@ sub scan {
             state( $pod, $here );
             if ( !$pod and /^=(\w+)/ ) {
                 $pod = $1;
+                next;
             } elsif ( $pod and /^=cut$/ ) {
                 undef $pod;
                 next;
             }
-            if ( !$here and my @catch = /(?:<<(['"])?\w+\1?){1,}/g ) {
+            if ( !$here and my @catch = /(?:<<(['"])?(\w+)\1?){1,}/g ) {
                 $here = $catch[-1];
+                next;
             } elsif ( $here and /^$here$/ ) {
                 undef $here;
                 next;
             }
-            next if $pod or $here;
+            state $if = 0;
+            if (/^\s*if\s*\(.*\)\s*{(?:\s*#.*)?$/) {
+                $if++;
+                next;
+            } elsif ( $if > 0 and /^\s*}(?:\s*#.*)?$/ ) {
+                $if--;
+                next;
+
+            } elsif ( $if > 0 and /require\s*(["']|\s*)($qr4name)(?:\.p[lm]\1)?;/ ) {
+                my $name = $2;
+                my $res  = qx"corelist -v 5.012005 $name";
+                warn "'$name' is required inside BLOCK of 'if'\n" if $res =~ /undef$/;
+            }
+            next if $pod or $here or $if > 0;
             scan_line( \%pairs, $_ );
         }
         close $fh;
@@ -73,16 +89,21 @@ sub scan_line {
     my $pairs = shift;
     local $_ = shift;
     s/#.*$//;
-    my @names   = ();
-    my $qr4name = qr/[a-zA-Z][a-zA-Z\d]+(?:::\w+){0,}/;
+    my @names = ();
     if (/use\s+(?:base|parent)\s+qw[\("']\s*((?:$qr4name\s*){1,})[\)"']/) {
         push @names, split /\s+/, $1;
     } elsif (/use\s+(?:base|parent|autouse)\s+(['"])?($qr4name)\1?/) {
         $names[0] = $2;
-    } elsif (/(eval|if)\s*(['"{])\s*(require|use)\s+($qr4name).*(?:\2|})/) {
-        my ( $cmd, $name, $func ) = ( $1, $4, $3 );
+    } elsif (/eval\s*(['"{])\s*(require|use)\s+($qr4name).*(?:\2|})/) {
+        my ( $name, $func ) = ( $3, $2 );
         my $res = qx"corelist -v 5.012005 $name";
-        warn "$name is ${func}d inside of $cmd" if !$res;
+        warn "'$name' is ${func}d inside of eval\n" if $res =~ /undef$/;
+    } elsif ( /if\s+\(.*\)\s*\{.*require\s+($qr4name).*\}/
+        or /require\s+($qr4name)\s+if\s+\(?.*\)?/ )
+    {
+        my $name = $1;
+        my $res  = qx"corelist -v 5.012005 $name";
+        warn "'$name' is required inside of if\n" if $res =~ /undef$/;
     } elsif (/^\s*(?:require|use)\s+($qr4name)/) {
         $names[0] = $1;
     } elsif (/^\s*require\s+(["'])($qr4name)\.p[lm]\1/) {
