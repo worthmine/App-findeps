@@ -28,14 +28,20 @@ sub scan {
             next unless length $_;
             last if /^__(?:END|DATA)__$/;
             next if /^\s*#.*$/;
-            state $pod;
+            state( $pod, $here );
             if ( !$pod and /^=(\w+)/ ) {
                 $pod = $1;
             } elsif ( $pod and /^=cut$/ ) {
                 undef $pod;
                 next;
             }
-            next if $pod;
+            if ( !$here and /<<(['"])?(\w+)\1?/ ) {
+                $here = $2;
+            } elsif ( $here and /^$here$/ ) {
+                undef $here;
+                next;
+            }
+            next if $pod or $here;
             scan_line( \%pairs, $_ );
         }
         close $fh;
@@ -77,7 +83,6 @@ sub scan_line {
         my ( $cmd, $name, $func ) = ( $1, $4, $3 );
         my $res = qx"corelist -v 5.012005 $name";
         warn "$name is ${func}d inside of $cmd" if !$res;
-
     } elsif (/^\s*(?:require|use)\s+($qr4name)/) {
         $names[0] = $1;
     } elsif (/^\s*require\s+(["'])($qr4name)\.p[lm]\1/) {
