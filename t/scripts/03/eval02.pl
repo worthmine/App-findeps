@@ -13,6 +13,8 @@ require Encode;
 
 # eval { use CommentOuted; return CommentOuted->new(); }; # will be ignored
 my $dummys = 1;    # eval { use CommentOuted; return CommentOuted->new(); }; # will be ignored
-my $dummy  = eval { use Dummy; return Dummy->new(); };    # does not exist anywhere
+my $dummy  = eval "use Eval::With::Double::Quoted; return Dummy->new();";    # will be ignored
+
+require Dummy;                                                               # does not exist
 
 exit;

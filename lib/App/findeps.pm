@@ -4,7 +4,7 @@ use 5.012005;
 use strict;
 use warnings;
 
-our $VERSION = "0.06";
+our $VERSION = "0.07";
 
 use Carp qw(carp croak);
 use ExtUtils::Installed;
@@ -29,35 +29,38 @@ sub scan {
             next unless length $_;
             last if /^__(?:END|DATA)__$/;
             next if /^\s*#.*$/;
-            state( $pod, $here );
+            state( $pod, $here, $eval );
             if ( !$pod and /^=(\w+)/ ) {
                 $pod = $1;
-                next;
             } elsif ( $pod and /^=cut$/ ) {
                 undef $pod;
                 next;
             }
             if ( !$here and my @catch = /(?:<<(['"])?(\w+)\1?){1,}/g ) {
                 $here = $catch[-1];
-                next;
             } elsif ( $here and /^$here$/ ) {
                 undef $here;
                 next;
             }
-            state $if = 0;
-            if (/^\s*if\s*\(.*\)\s*{(?:\s*#.*)?$/) {
-                $if++;
+            s/\s+#.*$//g;
+            if ( !$eval and /eval\s*(['"{])$/ ) {
+                $eval = $1 eq '{' ? '}' : $1;
+            } elsif ( $eval and /$eval(?:.*)?;$/ ) {
+                undef $eval;
                 next;
-            } elsif ( $if > 0 and /^\s*}(?:\s*#.*)?$/ ) {
+            } elsif ( $eval and /(require|use)\s+($qr4name)/ ) {
+                warnIgnored( $2, $1, 'eval' );
+            }
+            state $if = 0;
+            if (/^\s*if\s*\(.*\)\s*{$/) {
+                $if++;
+            } elsif ( $if > 0 and /^\s*}$/ ) {
                 $if--;
                 next;
-
-            } elsif ( $if > 0 and /require\s*(["']|\s*)($qr4name)(?:\.p[lm]\1)?;/ ) {
-                my $name = $2;
-                my $res  = qx"corelist -v 5.012005 $name";
-                warn "'$name' is required inside BLOCK of 'if'\n" if $res =~ /undef$/;
+            } elsif ( $if > 0 and /^\s*(require|use)\s+($qr4name)/ ) {
+                warnIgnored( $2, $1, 'if' );
             }
-            next if $pod or $here or $if > 0;
+            next if $pod or $here or $eval or $if;
             scan_line( \%pairs, $_ );
         }
         close $fh;
@@ -94,16 +97,12 @@ sub scan_line {
         push @names, split /\s+/, $1;
     } elsif (/use\s+(?:base|parent|autouse)\s+(['"])?($qr4name)\1?/) {
         $names[0] = $2;
-    } elsif (/eval\s*(['"{])\s*(require|use)\s+($qr4name).*(?:\2|})/) {
-        my ( $name, $func ) = ( $3, $2 );
-        my $res = qx"corelist -v 5.012005 $name";
-        warn "'$name' is ${func}d inside of eval\n" if $res =~ /undef$/;
+    } elsif (/eval\s*(['"{])\s*(require|use)\s+($qr4name).*(?:\1|})/) {
+        warnIgnored( $3, $2, 'eval' );
     } elsif ( /if\s+\(.*\)\s*\{.*require\s+($qr4name).*\}/
         or /require\s+($qr4name)\s+if\s+\(?.*\)?/ )
     {
-        my $name = $1;
-        my $res  = qx"corelist -v 5.012005 $name";
-        warn "'$name' is required inside of if\n" if $res =~ /undef$/;
+        warnIgnored( $1, 'require', 'eval' );
     } elsif (/^\s*(?:require|use)\s+($qr4name)/) {
         $names[0] = $1;
     } elsif (/^\s*require\s+(["'])($qr4name)\.p[lm]\1/) {
@@ -127,6 +126,15 @@ sub get_version {
     return "$version" if $version;
     eval "require $name" or return undef;
     return eval "no strict 'subs';\$${name}::VERSION" || 0;
+}
+
+sub warnIgnored {
+    my $name = shift;
+    my $func = shift;
+    my $cmd  = shift;
+    my $res  = qx"corelist $name 2>&1";
+    warn "$name is ${func}d inside of '$cmd'\n"
+        if $res =~ /(?:removed|$name was not in CORE)/;
 }
 
 1;
