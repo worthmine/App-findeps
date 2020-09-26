@@ -48,6 +48,8 @@ sub scan {
             } elsif ( $eval and /$eval(?:.*)?;$/ ) {
                 undef $eval;
                 next;
+            } elsif ( $eval and /(require|use)\s+($qr4name)/ ) {
+                warnIgnored( $2, $1, 'eval' );
             }
             state $if = 0;
             if (/^\s*if\s*\(.*\)\s*{$/) {
@@ -55,9 +57,11 @@ sub scan {
             } elsif ( $if > 0 and /^\s*}$/ ) {
                 $if--;
                 next;
+            } elsif ( $if > 0 and /^\s*(require|use)\s+($qr4name)/ ) {
+                warnIgnored( $2, $1, 'if' );
             }
-            next if $pod or $here;
-            scan_line( \%pairs, $_, $eval, $if );
+            next if $pod or $here or $eval or $if;
+            scan_line( \%pairs, $_ );
         }
         close $fh;
     }
@@ -87,7 +91,6 @@ my @pragmas = qw(
 sub scan_line {
     my $pairs = shift;
     local $_ = shift;
-    my ( $eval, $if ) = @_;
     s/#.*$//;
     my @names = ();
     if (/use\s+(?:base|parent)\s+qw[\("']\s*((?:$qr4name\s*){1,})[\)"']/) {
@@ -100,22 +103,10 @@ sub scan_line {
         or /require\s+($qr4name)\s+if\s+\(?.*\)?/ )
     {
         warnIgnored( $1, 'require', 'eval' );
-    } elsif (/^\s*(require|use)\s+($qr4name)/) {
-        if ($eval) {
-            warnIgnored( $2, $1, 'eval' );
-        } elsif ($if) {
-            warnIgnored( $2, $1, 'if' );
-        } else {
-            $names[0] = $2;
-        }
+    } elsif (/^\s*(?:require|use)\s+($qr4name)/) {
+        $names[0] = $1;
     } elsif (/^\s*require\s+(["'])($qr4name)\.p[lm]\1/) {
-        if ($eval) {
-            warnIgnored( $2, 'require', 'eval' );
-        } elsif ($if) {
-            warnIgnored( $2, 'require', 'if' );
-        } else {
-            $names[0] = $2;
-        }
+        $names[0] = $2;
     }
     for my $name (@names) {
         next unless length $name;
