@@ -13,7 +13,7 @@ Revision history for Perl extension App-findeps
     - be strict for parsing with regex 
 
 0.04 2020-09-24T03:22:10Z
-    - try to fix issue 1
+    - try to fix a issue
 
 0.03 2020-09-21T10:54:00Z
     - improved Documents
