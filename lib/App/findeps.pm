@@ -48,12 +48,6 @@ sub scan {
             } elsif ( $eval and /$eval(?:.*)?;$/ ) {
                 undef $eval;
                 next;
-            } elsif ( $eval and /require\s*(["']|\s*)($qr4name)(?:\.p[lm]\1)?;/ ) {
-                my $name = $2;
-                my $res  = qx"corelist $name 2>&1";
-                warn "$name is required inside BLOCK of 'eval'\n"
-                    if $res =~ /removed/
-                    or $res =~ /$name was not in CORE/;
             }
             state $if = 0;
             if (/^\s*if\s*\(.*\)\s*{$/) {
@@ -61,15 +55,9 @@ sub scan {
             } elsif ( $if > 0 and /^\s*}$/ ) {
                 $if--;
                 next;
-            } elsif ( $if > 0 and /require\s*(["']|\s*)($qr4name)(?:\.p[lm]\1)?;/ ) {
-                my $name = $2;
-                my $res  = qx"corelist $name 2>&1";
-                warn "$name is required inside BLOCK of 'if'\n"
-                    if $res =~ /removed/
-                    or $res =~ /$name was not in CORE/;
             }
-            next if $pod or $here or $eval or $if > 0;
-            scan_line( \%pairs, $_ );
+            next if $pod or $here;
+            scan_line( \%pairs, $_, $eval, $if );
         }
         close $fh;
     }
@@ -99,6 +87,7 @@ my @pragmas = qw(
 sub scan_line {
     my $pairs = shift;
     local $_ = shift;
+    my ( $eval, $if ) = @_;
     s/#.*$//;
     my @names = ();
     if (/use\s+(?:base|parent)\s+qw[\("']\s*((?:$qr4name\s*){1,})[\)"']/) {
@@ -106,23 +95,27 @@ sub scan_line {
     } elsif (/use\s+(?:base|parent|autouse)\s+(['"])?($qr4name)\1?/) {
         $names[0] = $2;
     } elsif (/eval\s*(['"{])\s*(require|use)\s+($qr4name).*(?:\1|})/) {
-        my ( $name, $func ) = ( $3, $2 );
-        my $res = qx"corelist $name 2>&1";
-        warn "$name is ${func}d inside of eval\n"
-            if $res =~ /removed/
-            or $res =~ /$name was not in CORE/;
+        warnIgnored( $3, $2, 'eval' );
     } elsif ( /if\s+\(.*\)\s*\{.*require\s+($qr4name).*\}/
         or /require\s+($qr4name)\s+if\s+\(?.*\)?/ )
     {
-        my $name = $1;
-        my $res  = qx"corelist $name 2>&1";
-        warn "$name is required inside of if\n"
-            if $res =~ /removed/
-            or $res =~ /$name was not in CORE/;
-    } elsif (/^\s*(?:require|use)\s+($qr4name)/) {
-        $names[0] = $1;
+        warnIgnored( $1, 'require', 'eval' );
+    } elsif (/^\s*(require|use)\s+($qr4name)/) {
+        if ($eval) {
+            warnIgnored( $2, $1, 'eval' );
+        } elsif ($if) {
+            warnIgnored( $2, $1, 'if' );
+        } else {
+            $names[0] = $2;
+        }
     } elsif (/^\s*require\s+(["'])($qr4name)\.p[lm]\1/) {
-        $names[0] = $2;
+        if ($eval) {
+            warnIgnored( $2, 'require', 'eval' );
+        } elsif ($if) {
+            warnIgnored( $2, 'require', 'if' );
+        } else {
+            $names[0] = $2;
+        }
     }
     for my $name (@names) {
         next unless length $name;
@@ -142,6 +135,15 @@ sub get_version {
     return "$version" if $version;
     eval "require $name" or return undef;
     return eval "no strict 'subs';\$${name}::VERSION" || 0;
+}
+
+sub warnIgnored {
+    my $name = shift;
+    my $func = shift;
+    my $cmd  = shift;
+    my $res  = qx"corelist $name 2>&1";
+    warn "$name is ${func}d inside of '$cmd'\n"
+        if $res =~ /(?:removed|$name was not in CORE)/;
 }
 
 1;
