@@ -29,7 +29,7 @@ sub scan {
             next unless length $_;
             last if /^__(?:END|DATA)__$/;
             next if /^\s*#.*$/;
-            state( $pod, $here );
+            state( $pod, $here, $eval );
             if ( !$pod and /^=(\w+)/ ) {
                 $pod = $1;
                 next;
@@ -42,6 +42,13 @@ sub scan {
                 next;
             } elsif ( $here and /^$here$/ ) {
                 undef $here;
+                next;
+            }
+            if ( !$eval and /eval\s*(['"{])(?:\s*#.*)?$/ ) {
+                $eval = $1;
+                next;
+            } elsif ( $eval and /(?:$eval|})(?:.*);(?:\s*#.*)?$/ ) {
+                undef $eval;
                 next;
             }
             state $if = 0;
@@ -57,7 +64,7 @@ sub scan {
                 my $res  = qx"corelist -v 5.012005 $name";
                 warn "$name is required inside BLOCK of 'if'\n" if $res =~ /undef$/;
             }
-            next if $pod or $here or $if > 0;
+            next if $pod or $here or $eval or $if > 0;
             scan_line( \%pairs, $_ );
         }
         close $fh;
