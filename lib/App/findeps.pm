@@ -35,7 +35,7 @@ sub scan {
                 undef $pod;
                 next;
             }
-            if ( !$here and my @catch = /(?:<<(['"])?\w+\1?){1,}/g ) {
+            if ( !$here and my @catch = /(?:<<(['"])?(\w+)\1?){1,}/g ) {
                 $here = $catch[-1];
             } elsif ( $here and /^$here$/ ) {
                 undef $here;
