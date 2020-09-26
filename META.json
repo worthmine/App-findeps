@@ -44,6 +44,7 @@
          "requires" : {
             "FastGlob" : "1.5",
             "List::Util" : "1.55",
+            "Module::CoreList" : "5.20200920",
             "perl" : "5.012005"
          }
       },

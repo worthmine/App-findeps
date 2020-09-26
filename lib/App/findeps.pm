@@ -10,6 +10,7 @@ use Carp qw(carp croak);
 use ExtUtils::Installed;
 use List::Util qw(first);
 use FastGlob qw(glob);
+use Module::CoreList;
 
 our $Upgrade    = 0;
 our $myLib      = 'lib';
@@ -132,9 +133,7 @@ sub warnIgnored {
     my $name = shift;
     my $func = shift;
     my $cmd  = shift;
-    my $res  = qx"corelist $name 2>&1";
-    warn "$name is ${func}d inside of '$cmd'\n"
-        if $res =~ /(?:removed|$name was not in CORE)/;
+    warn "$name is ${func}d inside of '$cmd'\n" unless Module::CoreList::is_core($name);
 }
 
 1;

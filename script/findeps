@@ -12,6 +12,7 @@ our $VERSION = "0.07";
 use List::Util qw(first);
 use FastGlob qw(glob);
 use Getopt::Long;
+use Module::CoreList;
 
 use lib 'lib';
 use App::findeps;
@@ -89,14 +90,9 @@ EOL
 
 sub make_line {
     my ( $name, $version ) = split '~', shift;
-    my $res = qx"corelist $name";
+    return if Module::CoreList::is_core( $name, $version, $pVer );
     $version = $version ? ", '$version'" : '';
-    $res =~ /(v5\.\d+\.\d+)$/;
-    die $1 if $1;
-    return "requires '$name'$version;"
-        if $1 and version->parse($1) > $pVer
-        or $res =~ /$name was not in CORE/;
-    return;
+    return "requires '$name'$version;";
 }
 
 sub _getPath {
