@@ -55,7 +55,7 @@ sub scan {
             } elsif ( $if > 0 and /require\s*(["']|\s*)($qr4name)(?:\.p[lm]\1)?;/ ) {
                 my $name = $2;
                 my $res  = qx"corelist -v 5.012005 $name";
-                warn "'$name' is required inside BLOCK of 'if'" if $res =~ /undef$/;
+                warn "'$name' is required inside BLOCK of 'if'\n" if $res =~ /undef$/;
             }
             next if $pod or $here or $if > 0;
             scan_line( \%pairs, $_ );
