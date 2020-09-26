@@ -31,17 +31,26 @@ sub scan {
             state( $pod, $here );
             if ( !$pod and /^=(\w+)/ ) {
                 $pod = $1;
+                next;
             } elsif ( $pod and /^=cut$/ ) {
                 undef $pod;
                 next;
             }
             if ( !$here and my @catch = /(?:<<(['"])?(\w+)\1?){1,}/g ) {
                 $here = $catch[-1];
+                next;
             } elsif ( $here and /^$here$/ ) {
                 undef $here;
                 next;
             }
-            next if $pod or $here;
+            state $if = 0;
+            if (/^\s*if\s*\(.*\)\s*{(?:\s*#.*)?$/) {
+                $if++;
+            } elsif ( $if > 0 and /^\s*}(?:\s*#.*)?$/ ) {
+                $if--;
+                next;
+            }
+            next if $pod or $here or $if > 0;
             scan_line( \%pairs, $_ );
         }
         close $fh;
