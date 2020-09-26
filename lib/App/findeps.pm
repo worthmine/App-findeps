@@ -42,16 +42,17 @@ sub scan {
                 undef $here;
                 next;
             }
-            if ( !$eval and /eval\s*(['"{])(?:\s*#.*)?$/ ) {
+            s/\s+#.*$//g;
+            if ( !$eval and /eval\s*(['"{])$/ ) {
                 $eval = $1 eq '{' ? '}' : $1;
-            } elsif ( $eval and /$eval(?:.*)?;(?:\s*#.*)?$/ ) {
+            } elsif ( $eval and /$eval(?:.*)?;$/ ) {
                 undef $eval;
                 next;
             }
             state $if = 0;
-            if (/^\s*if\s*\(.*\)\s*{(?:\s*#.*)?$/) {
+            if (/^\s*if\s*\(.*\)\s*{$/) {
                 $if++;
-            } elsif ( $if > 0 and /^\s*}(?:\s*#.*)?$/ ) {
+            } elsif ( $if > 0 and /^\s*}$/ ) {
                 $if--;
                 next;
             } elsif ( $if > 0 and /require\s*(["']|\s*)($qr4name)(?:\.p[lm]\1)?;/ ) {
