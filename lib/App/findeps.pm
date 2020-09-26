@@ -97,13 +97,13 @@ sub scan_line {
     } elsif (/eval\s*(['"{])\s*(require|use)\s+($qr4name).*(?:\2|})/) {
         my ( $name, $func ) = ( $3, $2 );
         my $res = qx"corelist -v 5.012005 $name";
-        warn "'$name' is ${func}d inside of eval" if $res =~ /undef$/;
+        warn "'$name' is ${func}d inside of eval\n" if $res =~ /undef$/;
     } elsif ( /if\s+\(.*\)\s*\{.*require\s+($qr4name).*\}/
         or /require\s+($qr4name)\s+if\s+\(?.*\)?/ )
     {
         my $name = $1;
         my $res  = qx"corelist -v 5.012005 $name";
-        warn "'$name' is required inside of if" if $res =~ /undef$/;
+        warn "'$name' is required inside of if\n" if $res =~ /undef$/;
     } elsif (/^\s*(?:require|use)\s+($qr4name)/) {
         $names[0] = $1;
     } elsif (/^\s*require\s+(["'])($qr4name)\.p[lm]\1/) {
