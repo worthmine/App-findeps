@@ -48,6 +48,12 @@ sub scan {
             } elsif ( $eval and /$eval(?:.*)?;$/ ) {
                 undef $eval;
                 next;
+            } elsif ( $eval and /require\s*(["']|\s*)($qr4name)(?:\.p[lm]\1)?;/ ) {
+                my $name = $2;
+                my $res  = qx"corelist $name 2>&1";
+                warn "$name is required inside BLOCK of 'eval'\n"
+                    if $res =~ /removed/
+                    or $res =~ /$name was not in CORE/;
             }
             state $if = 0;
             if (/^\s*if\s*\(.*\)\s*{$/) {
@@ -58,7 +64,6 @@ sub scan {
             } elsif ( $if > 0 and /require\s*(["']|\s*)($qr4name)(?:\.p[lm]\1)?;/ ) {
                 my $name = $2;
                 my $res  = qx"corelist $name 2>&1";
-                warn $res;
                 warn "$name is required inside BLOCK of 'if'\n"
                     if $res =~ /removed/
                     or $res =~ /$name was not in CORE/;
