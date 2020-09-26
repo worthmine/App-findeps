@@ -15,7 +15,7 @@ our $Upgrade    = 0;
 our $myLib      = 'lib';
 our $toCpanfile = 0;
 my $RE      = qr/\w+\.((?i:p[ml]|t|cgi|psgi))$/;
-my $qr4name = qr/[a-zA-Z][a-zA-Z\d]+(?:::\w+){0,}/;
+my $qr4name = qr/[a-zA-Z][a-zA-Z\d]+(?:::[a-zA-Z\d]+){0,}/;
 
 sub scan {
     my %args = @_;
