@@ -64,6 +64,7 @@ sub scan {
 sub makeCpanfile {
     die 'Too many Arguments' if @_ > 1;
     my $file = shift;
+    $App::findeps::Upgrade = 1;
     my $name = _name($file);
     $file = _getPath($name) if $file =~ /::/;
     my @list = scan($file);

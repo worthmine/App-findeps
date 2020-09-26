@@ -113,6 +113,7 @@ sub scan_line {
         next unless length $name;
         next if exists $pairs->{$name};
         next if $name eq 'Plack::Builder';
+        next if $Upgrade and Module::CoreList->is_core($name);
         next if first { $name eq $_ } @pragmas;
         $pairs->{$name} = get_version($name);
     }
