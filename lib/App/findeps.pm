@@ -4,7 +4,7 @@ use 5.012005;
 use strict;
 use warnings;
 
-our $VERSION = "0.07";
+our $VERSION = "0.08";
 
 use Carp qw(carp croak);
 use ExtUtils::Installed;
@@ -133,7 +133,7 @@ sub warnIgnored {
     my $name = shift;
     my $func = shift;
     my $cmd  = shift;
-    warn "$name is ${func}d inside of '$cmd'\n" unless Module::CoreList::is_core($name);
+    warn "$name is ${func}d inside of '$cmd'\n" unless Module::CoreList->is_core($name);
 }
 
 1;
