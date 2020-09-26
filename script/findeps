@@ -91,7 +91,8 @@ sub make_line {
     my ( $name, $version ) = split '~', shift;
     my $res = qx"corelist $name";
     $version = $version ? ", '$version'" : '';
-    $res =~ /^(5\.\d+)/;
+    $res =~ /(v5\.\d+\.\d+)$/;
+    die $1 if $1;
     return "requires '$name'$version;"
         if $1 and version->parse($1) > $pVer
         or $res =~ /$name was not in CORE/;

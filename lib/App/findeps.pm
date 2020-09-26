@@ -57,8 +57,10 @@ sub scan {
                 next;
             } elsif ( $if > 0 and /require\s*(["']|\s*)($qr4name)(?:\.p[lm]\1)?;/ ) {
                 my $name = $2;
-                my $res  = qx"corelist -v 5.012005 $name";
-                warn "$name is required inside BLOCK of 'if'\n" if $res =~ /(?:deprecated|undef$)/;
+                my $res  = qx"corelist $name";
+                warn "$name is required inside BLOCK of 'if'\n"
+                    if $res =~ /(v5\.\d+\.\d+)$/
+                    or $res =~ /$name was not in CORE/;
             }
             next if $pod or $here or $eval or $if > 0;
             scan_line( \%pairs, $_ );
@@ -100,13 +102,17 @@ sub scan_line {
     } elsif (/eval\s*(['"{])\s*(require|use)\s+($qr4name).*(?:\1|})/) {
         my ( $name, $func ) = ( $3, $2 );
         my $res = qx"corelist -v 5.012005 $name";
-        warn "$name is ${func}d inside of eval\n" if $res =~ /(?:deprecated|undef$)/;
+        warn "$name is ${func}d inside of eval\n"
+            if $res =~ /(v5\.\d+\.\d+)$/
+            or $res =~ /$name was not in CORE/;
     } elsif ( /if\s+\(.*\)\s*\{.*require\s+($qr4name).*\}/
         or /require\s+($qr4name)\s+if\s+\(?.*\)?/ )
     {
         my $name = $1;
         my $res  = qx"corelist -v 5.012005 $name";
-        warn "$name is required inside of if\n" if $res =~ /(?:deprecated|undef$)/;
+        warn "$name is required inside of if\n"
+            if $res =~ /(v5\.\d+\.\d+)$/
+            or $res =~ /$name was not in CORE/;
     } elsif (/^\s*(?:require|use)\s+($qr4name)/) {
         $names[0] = $1;
     } elsif (/^\s*require\s+(["'])($qr4name)\.p[lm]\1/) {
