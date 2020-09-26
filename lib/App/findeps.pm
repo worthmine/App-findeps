@@ -47,10 +47,11 @@ sub scan {
             state $if = 0;
             if (/^\s*if\s*\(.*\)\s*{(?:\s*#.*)?$/) {
                 $if++;
+                next;
             } elsif ( $if > 0 and /^\s*}(?:\s*#.*)?$/ ) {
                 $if--;
                 next;
-            } elsif (/^\s*require\s+(["'])?($qr4name)(?:\.p[lm]\1)?/) {
+            } elsif (/^\s*require\s+(["'])?($qr4name)(?:\.p[lm]\1)?;/) {
                 my $res = qx"corelist -v 5.012005 $2";
                 warn "$1 is required inside of if" if !$res;
             }
