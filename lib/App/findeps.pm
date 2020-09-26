@@ -79,10 +79,15 @@ sub scan_line {
         push @names, split /\s+/, $1;
     } elsif (/use\s+(?:base|parent|autouse)\s+(['"])?($qr4name)\1?/) {
         $names[0] = $2;
-    } elsif (/(eval|if)\s*(['"{])\s*(require|use)\s+($qr4name).*(?:\2|})/) {
-        my ( $cmd, $name, $func ) = ( $1, $4, $3 );
+    } elsif (/eval\s*(['"{])\s*(require|use)\s+($qr4name).*(?:\2|})/) {
+        my ( $name, $func ) = ( $3, $2 );
         my $res = qx"corelist -v 5.012005 $name";
-        warn "$name is ${func}d inside of $cmd" if !$res;
+        warn "$name is ${func}d inside of eval" if !$res;
+    } elsif ( /if\s+\(.*\)\s*\{.*require\s+($qr4name).*\}/
+        or /require\s+($qr4name)\s+if\s+\(?.*\)?/ )
+    {
+        my $res = qx"corelist -v 5.012005 $1";
+        warn "$1 is required inside of if" if !$res;
     } elsif (/^\s*(?:require|use)\s+($qr4name)/) {
         $names[0] = $1;
     } elsif (/^\s*require\s+(["'])($qr4name)\.p[lm]\1/) {

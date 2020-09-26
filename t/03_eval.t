@@ -6,7 +6,7 @@ use FastGlob qw(glob);
 
 my @files = &glob('./t/scripts/03/*.pl');
 for my $file (@files) {
-    my $done = qx"$^X ./script/findeps $file";
+    my $done = qx"$^X ./script/findeps $file 2>/dev/null";
     chomp $done;
     is $done, '', "succeed to ignore 'Dummy'";
 }
