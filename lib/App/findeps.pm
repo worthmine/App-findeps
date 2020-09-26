@@ -32,33 +32,28 @@ sub scan {
             state( $pod, $here, $eval );
             if ( !$pod and /^=(\w+)/ ) {
                 $pod = $1;
-                next;
             } elsif ( $pod and /^=cut$/ ) {
                 undef $pod;
                 next;
             }
             if ( !$here and my @catch = /(?:<<(['"])?(\w+)\1?){1,}/g ) {
                 $here = $catch[-1];
-                next;
             } elsif ( $here and /^$here$/ ) {
                 undef $here;
                 next;
             }
             if ( !$eval and /eval\s*(['"{])(?:\s*#.*)?$/ ) {
-                $eval = $1;
-                next;
-            } elsif ( $eval and /(?:$eval|})(?:.*)?;(?:\s*#.*)?$/ ) {
+                $eval = $1 eq '{' ? '}' : $1;
+            } elsif ( $eval and /$eval(?:.*)?;(?:\s*#.*)?$/ ) {
                 undef $eval;
                 next;
             }
             state $if = 0;
             if (/^\s*if\s*\(.*\)\s*{(?:\s*#.*)?$/) {
                 $if++;
-                next;
             } elsif ( $if > 0 and /^\s*}(?:\s*#.*)?$/ ) {
                 $if--;
                 next;
-
             } elsif ( $if > 0 and /require\s*(["']|\s*)($qr4name)(?:\.p[lm]\1)?;/ ) {
                 my $name = $2;
                 my $res  = qx"corelist -v 5.012005 $name";
