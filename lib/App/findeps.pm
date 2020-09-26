@@ -57,7 +57,8 @@ sub scan {
                 next;
             } elsif ( $if > 0 and /require\s*(["']|\s*)($qr4name)(?:\.p[lm]\1)?;/ ) {
                 my $name = $2;
-                my $res  = qx"corelist $name";
+                my $res  = qx"corelist $name 2>&1";
+                warn $res;
                 warn "$name is required inside BLOCK of 'if'\n"
                     if $res =~ /removed/
                     or $res =~ /$name was not in CORE/;
@@ -101,7 +102,7 @@ sub scan_line {
         $names[0] = $2;
     } elsif (/eval\s*(['"{])\s*(require|use)\s+($qr4name).*(?:\1|})/) {
         my ( $name, $func ) = ( $3, $2 );
-        my $res = qx"corelist $name";
+        my $res = qx"corelist $name 2>&1";
         warn "$name is ${func}d inside of eval\n"
             if $res =~ /removed/
             or $res =~ /$name was not in CORE/;
@@ -109,7 +110,7 @@ sub scan_line {
         or /require\s+($qr4name)\s+if\s+\(?.*\)?/ )
     {
         my $name = $1;
-        my $res  = qx"corelist $name";
+        my $res  = qx"corelist $name 2>&1";
         warn "$name is required inside of if\n"
             if $res =~ /removed/
             or $res =~ /$name was not in CORE/;
