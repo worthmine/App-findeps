@@ -14,7 +14,8 @@ use FastGlob qw(glob);
 our $Upgrade    = 0;
 our $myLib      = 'lib';
 our $toCpanfile = 0;
-my $RE = qr/\w+\.((?i:p[ml]|t|cgi|psgi))$/;
+my $RE      = qr/\w+\.((?i:p[ml]|t|cgi|psgi))$/;
+my $qr4name = qr/[a-zA-Z][a-zA-Z\d]+(?:::\w+){0,}/;
 
 sub scan {
     my %args = @_;
@@ -49,6 +50,9 @@ sub scan {
             } elsif ( $if > 0 and /^\s*}(?:\s*#.*)?$/ ) {
                 $if--;
                 next;
+            } elsif (/^\s*require\s+(["'])?($qr4name)(?:\.p[lm]\1)?/) {
+                my $res = qx"corelist -v 5.012005 $2";
+                warn "$1 is required inside of if" if !$res;
             }
             next if $pod or $here or $if > 0;
             scan_line( \%pairs, $_ );
@@ -82,8 +86,7 @@ sub scan_line {
     my $pairs = shift;
     local $_ = shift;
     s/#.*$//;
-    my @names   = ();
-    my $qr4name = qr/[a-zA-Z][a-zA-Z\d]+(?:::\w+){0,}/;
+    my @names = ();
     if (/use\s+(?:base|parent)\s+qw[\("']\s*((?:$qr4name\s*){1,})[\)"']/) {
         push @names, split /\s+/, $1;
     } elsif (/use\s+(?:base|parent|autouse)\s+(['"])?($qr4name)\1?/) {
