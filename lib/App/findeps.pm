@@ -75,9 +75,8 @@ sub scan_line {
         $names[0] = $2;
     } elsif (/(eval|if)\s*(['"{])\s*(require|use)\s+($qr4name).*(?:\2|})/) {
         my ( $cmd, $name, $func ) = ( $1, $4, $3 );
-        my $res = qx"corelist -v5.012005 $name";
-        $res =~ /($name) was not in CORE/;
-        warn "$1 is ${func}d inside of $cmd" if $1;
+        my $res = qx"corelist -v 5.012005 $name";
+        warn "$name is ${func}d inside of $cmd" if !$res;
 
     } elsif (/^\s*(?:require|use)\s+($qr4name)/) {
         $names[0] = $1;
