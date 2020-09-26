@@ -47,7 +47,7 @@ sub scan {
             if ( !$eval and /eval\s*(['"{])(?:\s*#.*)?$/ ) {
                 $eval = $1;
                 next;
-            } elsif ( $eval and /(?:$eval|})(?:.*);(?:\s*#.*)?$/ ) {
+            } elsif ( $eval and /(?:$eval|})(?:.*)?;(?:\s*#.*)?$/ ) {
                 undef $eval;
                 next;
             }
