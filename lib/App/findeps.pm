@@ -51,9 +51,9 @@ sub scan {
             } elsif ( $if > 0 and /^\s*}(?:\s*#.*)?$/ ) {
                 $if--;
                 next;
-            } elsif (/^\s*require\s+(["'])?($qr4name)(?:\.p[lm]\1)?;/) {
+            } elsif (/require\s+(["'])?($qr4name)(?:\.p[lm]\1)?;/) {
                 my $res = qx"corelist -v 5.012005 $2";
-                warn "$1 is required inside of if" if !$res;
+                warn "$2 is required inside of if" if !$res;
             }
             next if $pod or $here or $if > 0;
             scan_line( \%pairs, $_ );
