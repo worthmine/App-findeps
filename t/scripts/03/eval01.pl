@@ -13,6 +13,6 @@ use Data::Dumper qw(Dumper);
 my $dummys = 1;                        # eval { require CommentOuted }; # will be ignored
 eval { require Eval::With::Brace };    # does not exist anywhere
 
-require Dummy;
+require Dummy;                         # does not exist
 
 exit;

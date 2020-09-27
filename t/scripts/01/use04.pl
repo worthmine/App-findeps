@@ -10,7 +10,7 @@ our $VERSION = "0.01";
 use Data::Dumper qw(Dumper);
 require Encode;
 
-# use parent "CommentOuted";    # does not exist
+# use parent "CommentOuted";  # will be ignored
 my $dummys = 1;        # use parent "CommentOuted"; # will be ignored
 use parent "Dummy";    # does not exist
 
