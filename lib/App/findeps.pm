@@ -111,8 +111,8 @@ sub scan_line {
         $names[0] = $2;
     } elsif (/^\s*(require|use)\s+(.*)/) {
         my $name   = $2;
-        my $exists = -e $name ? 'exists' : 'does not exist';
-        warn "just detected but not listed: $name($exists) $1d";
+        my $exists = ( -e $name ) ? 'exists' : 'does not exist';
+        warn "just detected but not listed: $name($exists) $1d\n";
     }
     for my $name (@names) {
         next unless length $name;
