@@ -109,11 +109,11 @@ sub scan_line {
     } elsif (/^\s*(?:require|use)\s+($qr4name)/) {
         $names[0] = $1;
 
-        #} elsif (m!^\s*require\s*(["'])((?:\./)?(?:\w+/){0,}$qr4name\.p[lm])\1!) {
-        #    $names[0] = Common::_name($2);
+    } elsif (m!^\s*require\s*(["'])((?:\./)?(?:\w+/){0,}$qr4name\.pm)\1!) {
+        $names[0] = Common::_name($2);
     } elsif (/^\s*(require|use)\s+(['"]?)(.*)\2/) {
         my $name   = $3;
-        my $exists = ( -e $name ) ? 'exists' : 'does not exist';
+        my $exists = ( -e "$myLib/$name" ) ? 'exists' : 'does not exist';
         warn "just detected but not listed: $name($exists) $1d\n";
     }
     for my $name (@names) {
