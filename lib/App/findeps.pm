@@ -113,7 +113,7 @@ sub scan_line {
         $names[0] = Common::_name($2);
     } elsif (/^\s*(require|use)\s+(['"]?)(.*)\2/) {
         my $name   = $3;
-        my $exists = ( -e "$myLib/$name" ) ? 'exists' : 'does not exist';
+        my $exists = ( -e "$myLib/$name" ) ? 'exists' : "does not exist in $myLib";
         warn "just detected but not listed: $name($exists) $1d\n";
     }
     for my $name (@names) {
