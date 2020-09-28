@@ -2,6 +2,9 @@ Revision history for Perl extension App-findeps
 
 {{$NEXT}}
 
+0.09 2020-09-28T12:14:18Z
+    - passed strict tests
+
 0.08 2020-09-26T23:27:30Z
     - be faster with using Module::CoreList from using command `corelist`
 
