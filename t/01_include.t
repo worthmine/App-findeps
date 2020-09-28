@@ -7,7 +7,7 @@ use FastGlob qw(glob);
 use lib 'lib';
 use App::findeps;
 
-my @files = &glob('./t/scripts/02/*.pl');
+my @files = &glob('./t/scripts/01/*.pl');
 my $map   = App::findeps::scan( files => \@files );
 my @list  = ();
 foreach my $key ( sort keys %$map ) {

@@ -5,6 +5,6 @@ use warnings;
 
 use parent 'Module::Exists';
 
-use Dummy;    # does not exist and must be detected
+use Dummy;    # must be detected if this module was required
 
 1;

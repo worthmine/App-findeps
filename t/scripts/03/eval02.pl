@@ -1,21 +1,14 @@
-#!/usr/bin/env perl
-
 use strict;
 use warnings;
 
-use feature qw(say);
-
-our $VERSION = "0.01";
-
 use lib 't/lib';
-use Data::Dumper qw(Dumper);
-require Encode;
 
 # eval { use Module::CommentOuted; return Module::CommentOuted->new(); }; # will be ignored
-my $dummys
-    = 1; # eval { use Module::CommentOuted; return Module::CommentOuted->new(); }; # will be ignored
-my $dummy = eval "use Eval::With::Double::Quoted; return Dummy->new();";    # will be ignored
+1;    # eval { use Module::CommentOuted; return Module::CommentOuted->new(); }; # will be ignored
+my $dummy = eval "use Eval::With::DoubleQuote; return Eval::With::DoubleQuote->new();";
 
-require Dummy;                                                              # does not exist
+# will be ignored
+
+require Dummy;    # does not exist anywhere
 
 exit;

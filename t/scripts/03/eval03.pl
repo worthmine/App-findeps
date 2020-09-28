@@ -1,24 +1,26 @@
-#!/usr/bin/env perl
-
 use strict;
 use warnings;
 
-use feature qw(say);
+use lib 't/lib';
 
-our $VERSION = "0.01";
+=pod
 
-eval {    # brace
-    require Eval::With::Brace;    # not parsed
-};    # brace
+these below are not parsed because they're inside of C<eval> 
 
-eval '    # single quote
-    require Eval::With::Single::Quoted;    # not parsed
-' or warn $@;    # single quote
+=cut
 
-my $eval = eval "    # double quote
-            require Eval::With::Double::Quoted;    # not parsed
-" || {};         # double quote
+eval {    # braced
+    require Eval::With::Brace;
+};    # line ends
 
-require Dummy;   # does not exist
+eval "    # double quoted
+        require Eval::With::DoubleQuote;
+    " or die $@;    # line continues
+
+my $eval = eval '    # single quoted
+    require Eval::With::SingleQuote;
+' || {};            # line continues
+
+require Dummy;      # does not exist anywhere
 
 exit;

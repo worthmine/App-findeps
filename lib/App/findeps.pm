@@ -105,11 +105,11 @@ sub scan_line {
     } elsif ( /if\s+\(.*\)\s*\{.*require\s+($qr4name).*\}/
         or /require\s+($qr4name)\s+if\s+\(?.*\)?/ )
     {
-        warnIgnored( $1, 'require', 'eval' );
+        warnIgnored( $1, 'require', 'if' );
     } elsif (/^\s*(?:require|use)\s+($qr4name)/) {
         $names[0] = $1;
     } elsif (m!^\s*require\s*(["'])((?:\./)?(?:\w+/){0,}$qr4name\.p[lm])\1!) {
-        $names[0] = _name($2);
+        $names[0] = Common::_name($2);
     } elsif (/^\s*(require|use)\s+(['"]?)(.*)\2/) {
         my $name   = $3;
         my $exists = ( -e $name ) ? 'exists' : 'does not exist';

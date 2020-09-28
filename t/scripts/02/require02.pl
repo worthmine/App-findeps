@@ -3,7 +3,9 @@ use warnings;
 
 use lib 't/lib';
 
-use Common;
-require Dummy;    # does not exist
+# require Module::CommentOuted # does exist but will be ignored
+my $dummys = 1;                # require Module::CommentOuted # does exist but will be ignored
+require 'Module/Exists.pm';    # does exist
+require 'Dummy.pm';            # does not exist anywhere
 
 exit;
