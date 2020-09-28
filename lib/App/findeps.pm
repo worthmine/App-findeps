@@ -11,6 +11,7 @@ use ExtUtils::Installed;
 use List::Util qw(first);
 use FastGlob qw(glob);
 use Module::CoreList;
+use Common;
 
 our $Upgrade    = 0;
 our $myLib      = 'lib';
@@ -94,7 +95,7 @@ sub scan_line {
     local $_ = shift;
     s/#.*$//;
     my @names = ();
-    return if /^\s*(require|use)\s+(5\.\d+)/;
+    return if /^\s*(?:require|use)\s+5\.\d{3}_?\d{3};$/;
     if (/use\s+(?:base|parent)\s+qw[\("']\s*((?:$qr4name\s*){1,})[\)"']/) {
         push @names, split /\s+/, $1;
     } elsif (/use\s+(?:base|parent|autouse)\s+(['"])?($qr4name)\1?/) {
@@ -107,8 +108,8 @@ sub scan_line {
         warnIgnored( $1, 'require', 'eval' );
     } elsif (/^\s*(?:require|use)\s+($qr4name)/) {
         $names[0] = $1;
-    } elsif (/^\s*require\s+(["'])($qr4name)\.p[lm]\1/) {
-        $names[0] = $2;
+    } elsif (m!^\s*require\s*(["'])((?:\./)?(?:\w+/){0,}$qr4name\.p[lm])\1!) {
+        $names[0] = _name($2);
     } elsif (/^\s*(require|use)\s+(['"]?)(.*)\2/) {
         my $name   = $3;
         my $exists = ( -e $name ) ? 'exists' : 'does not exist';
@@ -131,7 +132,7 @@ sub get_version {
     my $module    = first { $_ eq $name } $installed->modules();
     my $version   = eval { $installed->version($module) };
     return "$version" if $version;
-    eval "require $name" or return undef;
+    eval "use lib '$myLib'; require $name" or return undef;
     return eval "no strict 'subs';\$${name}::VERSION" || 0;
 }
 

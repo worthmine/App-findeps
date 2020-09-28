@@ -1,17 +1,11 @@
-#!/usr/bin/env perl
-
 use strict;
 use warnings;
 
-use feature qw(say);
+use lib 't/lib';
 
-our $VERSION = "0.01";
+# use parent qw(Dummy Module::CommentOuted); # does exist but will be ignored
+my $dummys = 1;    # use parent qw(Dummy Module::CommentOuted); # does exist but will be ignored
 
-use Data::Dumper qw(Dumper);
-require Encode;
-
-# use parent qw(CommentOuted Exporter);
-my $dummys = 1;                   # use parent qw(CommentOuted Exporter); # will be ignored
-use parent qw(Dummy Exporter);    # only Dummy does not exist
+use parent qw(Dummy Module::Exists);    # 'Dummy' does not exist anywhere
 
 exit;

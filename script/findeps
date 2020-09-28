@@ -16,6 +16,7 @@ use Module::CoreList;
 
 use lib 'lib';
 use App::findeps;
+
 use File::Basename qw(basename);
 my $scriptName = basename($0);
 my $usage      = <<"EOL";
@@ -51,10 +52,8 @@ sub scan {
     my $map  = App::findeps::scan( files => \@files );
     my @list = ();
     foreach my $key ( sort keys %$map ) {
-
-        #next if $key =~ /\.pl$/;
         my $version = $map->{$key};
-        my $name    = _name($key);
+        my $name    = Common::_name($key);
         my $dist    = $name;
         $dist .= "~$version" if length $version;
         push @list, $dist;
@@ -66,7 +65,7 @@ sub makeCpanfile {
     die 'Too many Arguments' if @_ > 1;
     my $file = shift;
     $App::findeps::Upgrade = 1;
-    my $name = _name($file);
+    my $name = Common::_name($file);
     $file = _getPath($name) if $file =~ /::/;
     my @list = scan($file);
     my ( @require, @test_require );
@@ -101,15 +100,6 @@ sub _getPath {
     local $_ = shift;
     s!::!/!g;
     "lib/$_.pm";
-}
-
-sub _name {
-    my $str = shift;
-    $str =~ s!/!::!g;
-    $str =~ s!^lib::!!;
-    $str =~ s!.pm$!!i;
-    $str =~ s!^auto::(.+)::.*!$1!;
-    return $str;
 }
 
 __END__

@@ -1,16 +1,11 @@
-#!/usr/bin/env perl
-
 use strict;
 use warnings;
 
-use feature qw(say);
+use lib 't/lib';
 
-our $VERSION = "0.01";
-
-use Data::Dumper qw(Dumper);
-
-# require 'CommentOuted' # will be ignored
-my $dummys = 1;        # require 'CommentOuted' # will be ignored
-require 'Dummy.pm';    # does not exist
+# require Module::CommentOuted # does exist but will be ignored
+my $dummys = 1;                # require Module::CommentOuted # does exist but will be ignored
+require 'Module/Exists.pm';    # does exist
+require 'Dummy.pm';            # does not exist anywhere
 
 exit;

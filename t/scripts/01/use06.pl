@@ -1,17 +1,13 @@
-#!/usr/bin/env perl
-
 use strict;
 use warnings;
 
-use feature qw(say);
+use lib 't/lib';
 
-our $VERSION = "0.01";
+# use autouse 'Module::CommentOuted' => qw(dummy isdummy); # does exist but will be ignored
+my $dummys
+    = 1; # use autouse 'Module::CommentOuted' => qw(dummy isdummy); # does exist but will be ignored
 
-use Data::Dumper qw(Dumper);
-require Encode;
-
-# use autouse qw(CommentOuted Exporter); # will be ignored
-my $dummys = 1;    # use autouse 'CommentOuted' => qw(dummy isdummy); # will be ignored
-use autouse 'Dummy' => qw(dummy isdummy);    # Dummy does not exist
+use autouse 'Module::Exists' => qw(dummy isdummy);    # does exist in t/lib
+use autouse 'Dummy'          => qw(dummy isdummy);    # 'Dummy' does not exist anywhere
 
 exit;

@@ -3,8 +3,8 @@ use strict;
 use warnings;
 
 use lib 't/lib';
-use base 'Other';
+require 'Other.pl';
 
-# require CommentOuted; # will be ignored
+# require Module::CommentOuted; # will be ignored
 
 1;

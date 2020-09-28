@@ -1,17 +1,12 @@
-#!/usr/bin/env perl
-
 use strict;
 use warnings;
 
-use feature qw(say);
+use lib 't/lib';
 
-our $VERSION = "0.01";
+# use parent 'Module::CommentOuted'; # does exist but will be ignored
+my $dummys = 1;    # use parent 'Module::CommentOuted'; # does exist but will be ignored
 
-use Data::Dumper qw(Dumper);
-require Encode;
-
-# use parent "CommentOuted";  # will be ignored
-my $dummys = 1;        # use parent "CommentOuted"; # will be ignored
-use parent "Dummy";    # does not exist
+use parent 'Module::Exists';    # does exist in t/lib
+use parent 'Dummy';             # does not exist anywhere
 
 exit;

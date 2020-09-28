@@ -11,10 +11,11 @@ use lib 't/lib';
 use Data::Dumper qw(Dumper);
 require Encode;
 
-# eval { use CommentOuted; return CommentOuted->new(); }; # will be ignored
-my $dummys = 1;    # eval { use CommentOuted; return CommentOuted->new(); }; # will be ignored
-my $dummy  = eval "use Eval::With::Double::Quoted; return Dummy->new();";    # will be ignored
+# eval { use Module::CommentOuted; return Module::CommentOuted->new(); }; # will be ignored
+my $dummys
+    = 1; # eval { use Module::CommentOuted; return Module::CommentOuted->new(); }; # will be ignored
+my $dummy = eval "use Eval::With::Double::Quoted; return Dummy->new();";    # will be ignored
 
-require Dummy;                                                               # does not exist
+require Dummy;                                                              # does not exist
 
 exit;
