@@ -4,18 +4,19 @@ use 5.012005;
 use strict;
 use warnings;
 
-our $VERSION = "0.07";
+our $VERSION = "0.09";
 
 use Carp qw(carp croak);
 use ExtUtils::Installed;
 use List::Util qw(first);
 use FastGlob qw(glob);
+use Module::CoreList;
 
 our $Upgrade    = 0;
 our $myLib      = 'lib';
 our $toCpanfile = 0;
 my $RE      = qr/\w+\.((?i:p[ml]|t|cgi|psgi))$/;
-my $qr4name = qr/[a-zA-Z][a-zA-Z\d]+(?:::\w+){0,}/;
+my $qr4name = qr/[a-zA-Z][a-zA-Z\d]+(?:::[a-zA-Z\d]+){0,}/;
 
 sub scan {
     my %args = @_;
@@ -93,6 +94,7 @@ sub scan_line {
     local $_ = shift;
     s/#.*$//;
     my @names = ();
+    return if /^\s*(?:require|use)\s+5\.\d{3}_?\d{3};$/;
     if (/use\s+(?:base|parent)\s+qw[\("']\s*((?:$qr4name\s*){1,})[\)"']/) {
         push @names, split /\s+/, $1;
     } elsif (/use\s+(?:base|parent|autouse)\s+(['"])?($qr4name)\1?/) {
@@ -102,16 +104,22 @@ sub scan_line {
     } elsif ( /if\s+\(.*\)\s*\{.*require\s+($qr4name).*\}/
         or /require\s+($qr4name)\s+if\s+\(?.*\)?/ )
     {
-        warnIgnored( $1, 'require', 'eval' );
+        warnIgnored( $1, 'require', 'if' );
     } elsif (/^\s*(?:require|use)\s+($qr4name)/) {
         $names[0] = $1;
-    } elsif (/^\s*require\s+(["'])($qr4name)\.p[lm]\1/) {
-        $names[0] = $2;
+
+    } elsif (m!^\s*require\s*(["'])((?:\./)?(?:\w+/){0,}$qr4name\.pm)\1!) {
+        $names[0] = _name($2);
+    } elsif (/^\s*(require|use)\s+(['"]?)(.*)\2/) {
+        my $name   = $3;
+        my $exists = ( -e "$myLib/$name" ) ? 'exists' : "does not exist in $myLib";
+        warn "just detected but not listed: $name($exists) $1d\n";
     }
     for my $name (@names) {
         next unless length $name;
         next if exists $pairs->{$name};
         next if $name eq 'Plack::Builder';
+        next if $Upgrade and Module::CoreList->is_core($name);
         next if first { $name eq $_ } @pragmas;
         $pairs->{$name} = get_version($name);
     }
@@ -124,7 +132,7 @@ sub get_version {
     my $module    = first { $_ eq $name } $installed->modules();
     my $version   = eval { $installed->version($module) };
     return "$version" if $version;
-    eval "require $name" or return undef;
+    eval "use lib '$myLib'; require $name" or return undef;
     return eval "no strict 'subs';\$${name}::VERSION" || 0;
 }
 
@@ -132,9 +140,16 @@ sub warnIgnored {
     my $name = shift;
     my $func = shift;
     my $cmd  = shift;
-    my $res  = qx"corelist $name 2>&1";
-    warn "$name is ${func}d inside of '$cmd'\n"
-        if $res =~ /(?:removed|$name was not in CORE)/;
+    warn "$name is ${func}d inside of '$cmd'\n" unless Module::CoreList->is_core($name);
+}
+
+sub _name {
+    my $str = shift;
+    $str =~ s!/!::!g if $str =~ /\.pm$/;
+    $str =~ s!^lib::!!;
+    $str =~ s!.pm$!!i;
+    $str =~ s!^auto::(.+)::.*!$1!;
+    return $str;
 }
 
 1;

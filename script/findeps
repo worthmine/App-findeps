@@ -8,18 +8,20 @@ use strict;
 use warnings;
 use feature qw(say);
 
-our $VERSION = "0.07";
+our $VERSION = "0.09";
 use List::Util qw(first);
 use FastGlob qw(glob);
 use Getopt::Long;
+use Module::CoreList;
 
 use lib 'lib';
 use App::findeps;
+
 use File::Basename qw(basename);
 my $scriptName = basename($0);
 my $usage      = <<"EOL";
 Usage: $scriptName [ -u ] [ -L yourlib ] FILE | cpanm
-  -u | --upgradeAll         : flag it if you want to upgrade your dependencies
+  -u | --upgradeAll         : flag it if you want to upgrade all your dependencies
   -L | --myLib [yourLib]    : designate directory name of your library.
                             : then it will be excluding from detection.
                             : defaults to 'lib'
@@ -50,9 +52,8 @@ sub scan {
     my $map  = App::findeps::scan( files => \@files );
     my @list = ();
     foreach my $key ( sort keys %$map ) {
-        next if $key =~ /\.pl$/;
         my $version = $map->{$key};
-        my $name    = _name($key);
+        my $name    = App::findeps::_name($key);
         my $dist    = $name;
         $dist .= "~$version" if length $version;
         push @list, $dist;
@@ -63,7 +64,8 @@ sub scan {
 sub makeCpanfile {
     die 'Too many Arguments' if @_ > 1;
     my $file = shift;
-    my $name = _name($file);
+    $App::findeps::Upgrade = 1;
+    my $name = App::findeps::_name($file);
     $file = _getPath($name) if $file =~ /::/;
     my @list = scan($file);
     my ( @require, @test_require );
@@ -89,29 +91,15 @@ EOL
 
 sub make_line {
     my ( $name, $version ) = split '~', shift;
-    my $res = qx"corelist $name";
+    return if Module::CoreList->is_core( $name, $version, $pVer );
     $version = $version ? ", '$version'" : '';
-    $res =~ /(v5\.\d+\.\d+)$/;
-    die $1 if $1;
-    return "requires '$name'$version;"
-        if $1 and version->parse($1) > $pVer
-        or $res =~ /$name was not in CORE/;
-    return;
+    return "requires '$name'$version;";
 }
 
 sub _getPath {
     local $_ = shift;
     s!::!/!g;
     "lib/$_.pm";
-}
-
-sub _name {
-    my $str = shift;
-    $str =~ s!/!::!g;
-    $str =~ s!^lib::!!;
-    $str =~ s!.pm$!!i;
-    $str =~ s!^auto::(.+)::.*!$1!;
-    return $str;
 }
 
 __END__

@@ -1,13 +1,7 @@
-#!/usr/bin/env perl
-
 use strict;
 use warnings;
 
-use feature qw(say);
-
-our $VERSION = "0.01";
-
-require If::After::Require if 1;    # comment
+require If::After::Require if 1;    # always true but ignored
 
 require Dummy;                      # does not exist anywhere
 

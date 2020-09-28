@@ -1,14 +1,15 @@
-#!/usr/bin/env perl
-
 use strict;
 use warnings;
 
-use feature qw(say);
-
-our $VERSION = "0.01";
+# the inside of here document must be excluded from parsing
 my $here = <<'EOL';
-require HERE;
-use HERE::Somthing;
+    require Module::Exists;
+    use Here;
+EOL
+
+$here = <<"EOL";
+    require Here;
+    use Module::Exists;
 EOL
 
 require Dummy;    # does not exist anywhere

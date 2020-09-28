@@ -1,18 +1,12 @@
-#!/usr/bin/env perl
-
 use strict;
 use warnings;
 
-use feature qw(say);
+use lib 't/lib';
 
-our $VERSION = "0.01";
+# eval { require Module::CommentOuted }; # will be ignored
+my $dummys = 1;    # eval { require Module::CommentOuted }; # will be ignored
 
-use Data::Dumper qw(Dumper);
-
-# eval { require CommentOuted }; # will be ignored
-my $dummys = 1;                        # eval { require CommentOuted }; # will be ignored
-eval { require Eval::With::Brace };    # does not exist anywhere
-
-require Dummy;
+eval { require Eval::With::Brace } or die $@;    # does exist in t/lib
+require Dummy;                                   # does not exist anywhere
 
 exit;
