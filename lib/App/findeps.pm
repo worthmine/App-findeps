@@ -11,7 +11,6 @@ use ExtUtils::Installed;
 use List::Util qw(first);
 use FastGlob qw(glob);
 use Module::CoreList;
-use Common;
 
 our $Upgrade    = 0;
 our $myLib      = 'lib';
@@ -110,7 +109,7 @@ sub scan_line {
         $names[0] = $1;
 
     } elsif (m!^\s*require\s*(["'])((?:\./)?(?:\w+/){0,}$qr4name\.pm)\1!) {
-        $names[0] = Common::_name($2);
+        $names[0] = _name($2);
     } elsif (/^\s*(require|use)\s+(['"]?)(.*)\2/) {
         my $name   = $3;
         my $exists = ( -e "$myLib/$name" ) ? 'exists' : "does not exist in $myLib";
@@ -142,6 +141,15 @@ sub warnIgnored {
     my $func = shift;
     my $cmd  = shift;
     warn "$name is ${func}d inside of '$cmd'\n" unless Module::CoreList->is_core($name);
+}
+
+sub _name {
+    my $str = shift;
+    $str =~ s!/!::!g if $str =~ /\.pm$/;
+    $str =~ s!^lib::!!;
+    $str =~ s!.pm$!!i;
+    $str =~ s!^auto::(.+)::.*!$1!;
+    return $str;
 }
 
 1;

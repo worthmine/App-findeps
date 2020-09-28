@@ -53,7 +53,7 @@ sub scan {
     my @list = ();
     foreach my $key ( sort keys %$map ) {
         my $version = $map->{$key};
-        my $name    = Common::_name($key);
+        my $name    = App::findeps::_name($key);
         my $dist    = $name;
         $dist .= "~$version" if length $version;
         push @list, $dist;
@@ -65,7 +65,7 @@ sub makeCpanfile {
     die 'Too many Arguments' if @_ > 1;
     my $file = shift;
     $App::findeps::Upgrade = 1;
-    my $name = Common::_name($file);
+    my $name = App::findeps::_name($file);
     $file = _getPath($name) if $file =~ /::/;
     my @list = scan($file);
     my ( @require, @test_require );
