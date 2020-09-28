@@ -94,6 +94,7 @@ sub scan_line {
     local $_ = shift;
     s/#.*$//;
     my @names = ();
+    return if /^\s*(require|use)\s+(5\.\d+)/;
     if (/use\s+(?:base|parent)\s+qw[\("']\s*((?:$qr4name\s*){1,})[\)"']/) {
         push @names, split /\s+/, $1;
     } elsif (/use\s+(?:base|parent|autouse)\s+(['"])?($qr4name)\1?/) {
@@ -108,6 +109,8 @@ sub scan_line {
         $names[0] = $1;
     } elsif (/^\s*require\s+(["'])($qr4name)\.p[lm]\1/) {
         $names[0] = $2;
+    } elsif (/^\s*(require|use)\s+(.*)/) {
+        warn "just detected $1d but not listed: $2";
     }
     for my $name (@names) {
         next unless length $name;
