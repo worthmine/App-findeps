@@ -110,7 +110,8 @@ sub scan_line {
     } elsif (/^\s*require\s+(["'])($qr4name)\.p[lm]\1/) {
         $names[0] = $2;
     } elsif (/^\s*(require|use)\s+(.*)/) {
-        my $name   = $2;
+        my $name = $2;
+        $name =~ tr/"'//;
         my $exists = ( -e $name ) ? 'exists' : 'does not exist';
         warn "just detected but not listed: $name($exists) $1d\n";
     }
