@@ -12,7 +12,7 @@ our @EXPORT = qw(_name);
 
 sub _name {
     my $str = shift;
-    $str =~ s!/!::!g;
+    $str =~ s!/!::!g if $str =~ /\.pm$/;
     $str =~ s!^lib::!!;
     $str =~ s!.pm$!!i;
     $str =~ s!^auto::(.+)::.*!$1!;
