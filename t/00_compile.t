@@ -21,4 +21,8 @@ for (@list) {
     is $_, 'Dummy', "succeed to exclude ./lib/";
 }
 
+if ( eval 'require Pod::Markdown' ) {
+    qx'pod2markdown ./script/findeps >| findeps.md';
+}
+
 done_testing;

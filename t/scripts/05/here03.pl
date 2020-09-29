@@ -9,14 +9,14 @@ our $VERSION = "0.01";
 my @here = ( <<"FIRST", <<'SECOND', <<END);
 the inside of here document must be excluded from parsing
     require FIRST;
-    use HERE::FIRST;
+    use HERE::First;
 FIRST
 here is still inside..
     require SECOND;
     use HERE::Second;
 SECOND
 here is still inside..
-    require End;
+    require END;
     use HERE::End;
 END
 

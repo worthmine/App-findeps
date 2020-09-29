@@ -127,9 +127,9 @@ without installing them every single time
 
 C<findeps> is a command line tool that resolves dependencies from too many Perl modules
 
-L<scandeps.pl> requires you to have L<CPANPLUS>, but this requires just only L<cpanm>.
+L<scandeps.pl> requires you to have L<CPANPLUS> that was deprecated in v5.17.9 and removed from v5.19.0 on CORE
 
-I think that is a small reinvention.
+So I did I<reinvent> what requires just only L<cpanm>.
 
 =over
 
