@@ -1,19 +1,23 @@
 use strict;
 use warnings;
 
-# the all iside of nested if sholud NOT to be parsed
+use lib 't/lib';
 
-if (1) {
+my @dummys = ( 0, 0, 0, 0, 0 );
+
+# the all inside of 'if' nested sholud NOT to be parsed
+
+if ( shift @dummys ) {
     require Require::With::If;    # braced
 }
 
-if (1) {    # comment
+if ( shift @dummys ) {    # comment
     require Require::With::If::Commented;    # double braced
 }    # comment
 
-if (1) {    # first
-    if (1) {    # second
-        if (1) {    # third
+if ( shift @dummys ) {    # first
+    if ( shift @dummys ) {    # second
+        if ( shift @dummys ) {    # third
             require Require::With::Nested::If;    # triple braced
         }
     }

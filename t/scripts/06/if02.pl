@@ -1,8 +1,11 @@
 use strict;
 use warnings;
 
-require If::After::Require if 1;    # always true but ignored
+use lib 't/lib';
 
-require Dummy;                      # does not exist anywhere
+require If::AfterRequire if 0;    # ignored
+require If::AfterRequire if 1;    # ignored by parser
+
+require Dummy;                    # does not exist anywhere
 
 exit;

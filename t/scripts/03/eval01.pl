@@ -9,4 +9,4 @@ my $dummys = 1;    # eval { require Module::CommentOuted }; # will be ignored
 eval { require Eval::With::Brace } or die $@;    # does exist in t/lib
 require Dummy;                                   # does not exist anywhere
 
-exit;
+0;

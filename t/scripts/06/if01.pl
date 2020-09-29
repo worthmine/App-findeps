@@ -1,8 +1,11 @@
 use strict;
 use warnings;
 
-if (1) { require If::Before::Require }    # always true but ignored
+use lib 't/lib';
 
-require Dummy;                            # does not exist anywhere
+if (0) { require If::BeforeRequire }    # ignored
+if (1) { require If::BeforeRequire }    # ignored by parser
+
+require Dummy;                          # does not exist anywhere
 
 exit;
