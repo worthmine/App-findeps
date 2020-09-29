@@ -11,8 +11,7 @@ my $map   = App::findeps::scan( files => \@files );
 my @list  = ();
 foreach my $key ( sort keys %$map ) {
     my $version = $map->{$key};
-    my $name    = App::findeps::_name($key);
-    my $dist    = $name;
+    my $dist    = App::findeps::_name($key);
     $dist .= "~$version" if length $version;
     push @list, $dist;
 }
