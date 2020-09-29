@@ -21,7 +21,7 @@ for (@list) {
 }
 
 if ( eval 'require Pod::Markdown' ) {
-    qx'pod2markdown ./script/findeps >| README.md';
+    qx'pod2markdown script/findeps >| findeps.md';
 }
 
 done_testing;
