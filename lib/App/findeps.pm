@@ -4,7 +4,7 @@ use 5.012005;
 use strict;
 use warnings;
 
-our $VERSION = "0.10";
+our $VERSION = "0.11";
 
 use Carp qw(carp croak);
 use ExtUtils::Installed;
