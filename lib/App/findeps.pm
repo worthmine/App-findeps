@@ -53,13 +53,13 @@ sub scan {
                 warnIgnored( $2, $1, 'eval' );
             }
             state $if = 0;
-            if (/^\s*if\s*\(.*\)\s*{$/) {
+            if (/^\s*(?:if|unless)\s*\(.*\)\s*{$/) {
                 $if++;
             } elsif ( $if > 0 and /^\s*}$/ ) {
                 $if--;
                 next;
             } elsif ( $if > 0 and /^\s*(require|use)\s+($qr4name)/ ) {
-                warnIgnored( $2, $1, 'if' );
+                warnIgnored( $2, $1, 'if or unless' );
             }
             next if $pod or $here or $eval or $if;
             scan_line( \%pairs, $_ );
@@ -101,10 +101,10 @@ sub scan_line {
         $names[0] = $2;
     } elsif (/eval\s*(['"{])\s*(require|use)\s+($qr4name).*(?:\1|})/) {
         warnIgnored( $3, $2, 'eval' );
-    } elsif ( /if\s+\(.*\)\s*\{.*require\s+($qr4name).*\}/
-        or /require\s+($qr4name)\s+if\s+\(?.*\)?/ )
+    } elsif ( /(?:if|unless)\s+\(.*\)\s*\{.*require\s+($qr4name).*\}/
+        or /require\s+($qr4name)\s+(?:if|unless)\s+\(?.*\)?/ )
     {
-        warnIgnored( $1, 'require', 'if' );
+        warnIgnored( $1, 'require', 'if or unless' );
     } elsif (/^\s*(?:require|use)\s+($qr4name)/) {
         $names[0] = $1;
 
