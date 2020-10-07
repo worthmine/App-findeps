@@ -59,7 +59,7 @@ sub scan {
                 $if--;
                 next;
             } elsif ( $if > 0 and /^\s*(require|use)\s+($qr4name)/ ) {
-                warnIgnored( $2, $1, 'if or unless' );
+                warnIgnored( $2, $1, 'if' );
             }
             next if $pod or $here or $eval or $if;
             scan_line( \%pairs, $_ );
@@ -104,7 +104,7 @@ sub scan_line {
     } elsif ( /(?:if|unless)\s+\(.*\)\s*\{.*require\s+($qr4name).*\}/
         or /require\s+($qr4name)\s+(?:if|unless)\s+\(?.*\)?/ )
     {
-        warnIgnored( $1, 'require', 'if or unless' );
+        warnIgnored( $1, 'require', 'if' );
     } elsif (/^\s*(?:require|use)\s+($qr4name)/) {
         $names[0] = $1;
 
