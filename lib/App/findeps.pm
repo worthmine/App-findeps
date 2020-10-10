@@ -29,20 +29,24 @@ sub scan {
             chomp;
             next unless length $_;
             last if /^__(?:END|DATA)__$/;
-            next if /^\s*#.*$/;
             state( $pod, $here, $eval );
             if ( !$pod and /^=(\w+)/ ) {
                 $pod = $1;
-            } elsif ( $pod and /^=cut$/ ) {
+            } elsif ( $pod and $_ ne '=cut' ) {
+                next;
+            } elsif ( $pod and $_ eq '=cut' ) {
                 undef $pod;
                 next;
             }
             if ( !$here and my @catch = /(?:<<(['"])?(\w+)\1?){1,}/g ) {
                 $here = $catch[-1];
-            } elsif ( $here and /^$here$/ ) {
+            } elsif ( $here and $_ ne $here ) {
+                next;
+            } elsif ( $here and $_ eq $here ) {
                 undef $here;
                 next;
             }
+            next if /^\s*#.*/;
             s/\s+#.*$//g;
             if ( !$eval and /eval\s*(['"{])$/ ) {
                 $eval = $1 eq '{' ? '}' : $1;
@@ -61,7 +65,7 @@ sub scan {
             } elsif ( $if > 0 and /^\s*(require|use)\s+($qr4name)/ ) {
                 warnIgnored( $2, $1, 'if' );
             }
-            next if $pod or $here or $eval or $if;
+            next if $eval or $if;
             scan_line( \%pairs, $_ );
         }
         close $fh;
