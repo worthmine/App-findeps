@@ -10,7 +10,7 @@
    ],
    "meta-spec" : {
       "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
-      "version" : "2"
+      "version" : 2
    },
    "name" : "App-findeps",
    "no_index" : {
@@ -71,6 +71,6 @@
    "x_contributors" : [
       "worthmine <worthmine@gmail.com>"
    ],
-   "x_serialization_backend" : "JSON::PP version 2.27400_02",
+   "x_serialization_backend" : "JSON::PP version 4.05",
    "x_static_install" : 1
 }
