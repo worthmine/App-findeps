@@ -30,9 +30,10 @@ sub scan {
             next unless length $_;
             last if /^__(?:END|DATA)__$/;
             state( $pod, $here, $eval );
+            next if $pod  and $_ ne '=cut';
+            next if $here and $_ ne $here;
             if ( !$pod and /^=(\w+)/ ) {
                 $pod = $1;
-            } elsif ( $pod and $_ ne '=cut' ) {
                 next;
             } elsif ( $pod and $_ eq '=cut' ) {
                 undef $pod;
@@ -40,7 +41,6 @@ sub scan {
             }
             if ( !$here and my @catch = /(?:<<(['"])?(\w+)\1?){1,}/g ) {
                 $here = $catch[-1];
-            } elsif ( $here and $_ ne $here ) {
                 next;
             } elsif ( $here and $_ eq $here ) {
                 undef $here;
