@@ -1,7 +1,6 @@
 use strict;
 use warnings;
 
-use FastGlob qw(glob);
 use Test::More 0.98 tests => 2;
 
 use_ok $_ for qw(App::findeps);
