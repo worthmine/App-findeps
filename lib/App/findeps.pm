@@ -47,22 +47,22 @@ sub scan {
                 next;
             }
             next if /^\s*#.*/;
-            s/\s+#.*$//g;
+            s/\s+#.*$//;
             if ( !$eval and /eval\s*(['"{])$/ ) {
                 $eval = $1 eq '{' ? '}' : $1;
             } elsif ( $eval and /$eval(?:.*)?;$/ ) {
                 undef $eval;
                 next;
-            } elsif ( $eval and /(require|use)\s+($qr4name)/ ) {
+            } elsif ( $eval and /\b(require|use)\s+($qr4name)/ ) {
                 warnIgnored( $2, $1, 'eval' );
             }
             state $if = 0;
-            if (/^\s*(?:if|unless)\s*\(.*\)\s*{$/) {
+            if (/^\b(?:if|unless)\s*\(.*\)\s*{$/) {
                 $if++;
             } elsif ( $if > 0 and /^\s*}$/ ) {
                 $if--;
                 next;
-            } elsif ( $if > 0 and /^\s*(require|use)\s+($qr4name)/ ) {
+            } elsif ( $if > 0 and /^\b(require|use)\s+($qr4name)/ ) {
                 warnIgnored( $2, $1, 'if' );
             }
             next if $eval or $if;
@@ -96,9 +96,8 @@ my @pragmas = qw(
 sub scan_line {
     my $pairs = shift;
     local $_ = shift;
-    s/#.*$//;
     my @names = ();
-    return if /^\s*(?:require|use)\s+5\.\d{3}_?\d{3};$/;
+    return if /^\b(?:require|use)\s+5\.\d{3}_?\d{3};$/;
     if (/use\s+(?:base|parent)\s+qw[\("']\s*((?:$qr4name\s*){1,})[\)"']/) {
         push @names, split /\s+/, $1;
     } elsif (/use\s+(?:base|parent|autouse)\s+(['"])?($qr4name)\1?/) {
@@ -111,7 +110,6 @@ sub scan_line {
         warnIgnored( $1, 'require', 'if' );
     } elsif (/^\s*(?:require|use)\s+($qr4name)/) {
         $names[0] = $1;
-
     } elsif (m!^\s*require\s*(["'])((?:\./)?(?:\w+/){0,}$qr4name\.pm)\1!) {
         $names[0] = _name($2);
     } elsif (/^\s*(require|use)\s+(['"]?)(.*)\2/) {
