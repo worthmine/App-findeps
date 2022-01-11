@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 
 #use 5.012005;
-use 5.008_008;
+use 5.008_009;
 use version 0.77;
 my $pVer = version->parse('5.012_005');
 
