@@ -4,7 +4,7 @@
       "Yuki Yoshida(L<worthmine|https://github.com/worthmine>)"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Minilla/v3.1.11, CPAN::Meta::Converter version 2.150010",
+   "generated_by" : "Minilla/v3.1.13, CPAN::Meta::Converter version 2.150010",
    "license" : [
       "perl_5"
    ],
@@ -45,7 +45,7 @@
             "FastGlob" : "1.5",
             "List::Util" : "1.55",
             "Module::CoreList" : "5.20200920",
-            "perl" : "5.012005"
+            "perl" : "v5.8.9"
          }
       },
       "test" : {
@@ -71,6 +71,6 @@
    "x_contributors" : [
       "worthmine <worthmine@gmail.com>"
    ],
-   "x_serialization_backend" : "JSON::PP version 4.05",
+   "x_serialization_backend" : "JSON::PP version 4.07",
    "x_static_install" : 1
 }

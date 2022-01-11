@@ -1,4 +1,4 @@
-requires 'perl', '5.012001';
+requires 'perl', '5.8.9';
 
 requires 'FastGlob',         '1.5';
 requires 'List::Util',       '1.55';
