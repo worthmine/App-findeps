@@ -41,8 +41,12 @@
          }
       },
       "runtime" : {
+         "recommends" : {
+            "Directory::Iterator::XS" : "1.001002"
+         },
          "requires" : {
-            "FastGlob" : "1.5",
+            "Directory::Iterator" : "1.001",
+            "Directory::Iterator::PP" : "1.001004",
             "List::Util" : "1.55",
             "Module::CoreList" : "5.20200920",
             "perl" : "v5.10.1"

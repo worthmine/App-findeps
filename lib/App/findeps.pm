@@ -9,14 +9,29 @@ our $VERSION = "0.11";
 use Carp qw(carp croak);
 use ExtUtils::Installed;
 use List::Util qw(first);
-use FastGlob qw(glob);
+
 use Module::CoreList;
+use Directory::Iterator;
 
 our $Upgrade    = 0;
 our $myLib      = 'lib';
 our $toCpanfile = 0;
 my $RE      = qr/\w+\.((?i:p[ml]|t|cgi|psgi))$/;
 my $qr4name = qr/[a-zA-Z][a-zA-Z\d]+(?:::[a-zA-Z\d]+){0,}/;
+
+sub scanDir {    # To Do
+    my $dir = shift || $myLib || 'lib';
+    die "$dir is not a directory" unless -d $dir;
+
+    my @list = ();
+    my $list = Directory::Iterator->new($dir);
+    while ( $list->next ) {
+        my $file = $list->get;
+        next unless $file =~ /\.p[lm]$/;
+        scan( file => $file, list => \@list );
+    }
+    return @list;
+}
 
 sub scan {
     my %args = @_;
@@ -71,11 +86,19 @@ sub scan {
         close $fh;
     }
     my $deps  = {};
-    my @local = &glob("$myLib/*.p[lm]");
+    my @local = ();
+    my $list  = Directory::Iterator->new($myLib);
+    while ( $list->next ) {
+        my $file = $list->get;
+        next unless $file =~ s/\.p[lm]$//;
+        $file =~ s|/|::|g;
+        push @local, $file;
+    }
+
     while ( my ( $name, $version ) = each %pairs ) {
         next                      if !defined $name;
         next                      if exists $deps->{$name};
-        next                      if first { $_ =~ /$name\.p[lm]$/ } @local;
+        next                      if first { $_ eq $name } @local;
         $deps->{$name} = $version if !defined $version or $Upgrade or $toCpanfile;
     }
     return $deps;
