@@ -3,7 +3,7 @@ use warnings;
 
 use Test::More 0.98 tests => 2;
 
-use_ok $_ for qw(App::findeps);
+use_ok 'App::findeps';
 
 my $map  = App::findeps::scan( files => ['t/scripts/00_basic.pl'] );
 my @list = ();
@@ -15,7 +15,7 @@ foreach my $key ( sort keys %$map ) {
 }
 
 for (@list) {
-    is $_, 'Dummy', "succeed to exclude ./lib/";
+    is $_, 'Dummy', "succeed to scan a file";
 }
 
 done_testing;

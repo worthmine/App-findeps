@@ -1,8 +1,10 @@
 package App::findeps;
 
-use 5.012005;
+#use 5.012005;
+use 5.008_008;
 use strict;
 use warnings;
+use feature qw(state);
 
 our $VERSION = "0.11";
 
