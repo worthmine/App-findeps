@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use feature qw(state);
 
-our $VERSION = "0.11";
+our $VERSION = "0.12";
 
 use Carp qw(carp croak);
 use ExtUtils::Installed;
@@ -42,7 +42,7 @@ sub scan {
         open my $fh, '<', $file or die "Can't open < $file: $!";
         while (<$fh>) {
             chomp;
-            next unless length $_;
+            next unless defined $_;
             last if /^__(?:END|DATA)__$/;
             state( $pod, $here, $eval );
             next if $pod  and $_ ne '=cut';
@@ -141,7 +141,7 @@ sub scan_line {
         warn "just detected but not listed: $name($exists) $1d\n";
     }
     for my $name (@names) {
-        next unless length $name;
+        next unless defined $name;
         next if exists $pairs->{$name};
         next if $name eq 'Plack::Builder';
         next if first { $name eq $_ } @pragmas;

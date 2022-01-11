@@ -2,6 +2,10 @@ Revision history for Perl extension App-findeps
 
 {{$NEXT}}
 
+0.12 2022-01-11T13:21:51Z
+    - optimized sources with using Directory::Iterator
+    - re-range support perl versions 5.10 to 5.34
+
 0.11 2020-10-07T13:44:46Z
     - fixed #4
 

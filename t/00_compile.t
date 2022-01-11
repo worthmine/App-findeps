@@ -10,7 +10,7 @@ my @list = ();
 foreach my $key ( sort keys %$map ) {
     my $version = $map->{$key};
     my $dist    = App::findeps::_name($key);
-    $dist .= "~$version" if length $version;
+    $dist .= "~$version" if defined $version;
     push @list, $dist;
 }
 
