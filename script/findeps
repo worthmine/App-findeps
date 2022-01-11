@@ -53,7 +53,7 @@ sub scan {
         my $version = $map->{$key};
         my $name    = App::findeps::_name($key);
         my $dist    = $name;
-        $dist .= "~$version" if length $version;
+        $dist .= "~$version" if defined $version;
         push @list, $dist;
     }
     return @list;
