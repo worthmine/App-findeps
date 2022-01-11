@@ -2,6 +2,7 @@ package Module::Exists;
 
 use strict;
 use warnings;
+our $VERSION = 0.00;
 
 use Exporter 'import';
 our @EXPORT_OK = qw(dummy is_dummy);

@@ -1,17 +1,17 @@
 #!/usr/bin/env perl
-
-use version 0.77;
-my $pVer = version->parse('5.010_001');
-
 use strict;
 use warnings;
 use feature qw(say);
 
 our $VERSION = "0.12";
+
 use List::Util qw(first);
 use Directory::Iterator;
 use Getopt::Long;
 use Module::CoreList;
+
+use version 0.77;
+my $pVer = version->parse($]);    # parse version from running environment
 
 use App::findeps;
 

@@ -16,7 +16,7 @@ use Directory::Iterator;
 our $Upgrade    = 0;
 our $myLib      = 'lib';
 our $toCpanfile = 0;
-my $RE      = qr/\w+\.((?i:p[ml]|t|cgi|psgi))$/;
+my $qr4ext  = qr/\w+\.(p[ml]|t|cgi|psgi)$/;
 my $qr4name = qr/[a-zA-Z][a-zA-Z\d]+(?:::[a-zA-Z\d]+){0,}/;
 
 sub scanDir {    # To Do
@@ -37,8 +37,8 @@ sub scan {
     my %args = @_;
     my %pairs;
     while ( my $file = shift @{ $args{files} } ) {
-        $file =~ $RE;
-        my $ext = $1 || croak 'Unvalid extension was set';
+        ( my $ext = $file ) =~ $qr4ext;
+        warn "Invalid extension was set: $ext" unless $1;
         open my $fh, '<', $file or die "Can't open < $file: $!";
         while (<$fh>) {
             chomp;
@@ -76,6 +76,7 @@ sub scan {
                 $if++;
             } elsif ( $if > 0 and /^\s*}$/ ) {
                 $if--;
+                warn "something wrong to parse: $file" if $if < 0;
                 next;
             } elsif ( $if > 0 and /^\b(require|use)\s+($qr4name)/ ) {
                 warnIgnored( $2, $1, 'if' );
@@ -91,7 +92,7 @@ sub scan {
     while ( $list->next ) {
         my $file = $list->get;
         next unless $file =~ s/\.p[lm]$//;
-        $file =~ s|/|::|g;
+        $file =~ s!/!::!g;
         push @local, $file;
     }
 
@@ -156,9 +157,9 @@ sub get_version {
     my $installed = ExtUtils::Installed->new( skip_cwd => 1 );
     my $module    = first { $_ eq $name } $installed->modules();
     my $version   = eval { $installed->version($module) };
-    return "$version" if $version;
+    return $version if defined $version;
     eval "use lib '$myLib'; require $name" or return undef;
-    return eval "no strict 'subs';\$${name}::VERSION" || 0;
+    return eval "no strict 'subs';\$${name}::VERSION";
 }
 
 sub warnIgnored {
@@ -172,7 +173,7 @@ sub _name {
     my $str = shift;
     $str =~ s!/!::!g if $str =~ /\.pm$/;
     $str =~ s!^lib::!!;
-    $str =~ s!.pm$!!i;
+    $str =~ s!\.pm$!!;
     $str =~ s!^auto::(.+)::.*!$1!;
     return $str;
 }
