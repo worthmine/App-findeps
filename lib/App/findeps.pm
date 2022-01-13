@@ -71,6 +71,13 @@ sub scan {
             } elsif ( $eval and /\b(require|use)\s+($qr4name)/ ) {
                 warnIgnored( $2, $1, 'eval' );
             }
+            next if $eval;
+
+            if (/\buse\b/) {
+                scan_line( \%pairs, $_ );
+                next;
+            }
+
             state $if = 0;
             if (/^\b(?:if|unless)\s*\(.*\)\s*{$/) {
                 $if++;
@@ -78,20 +85,21 @@ sub scan {
                 $if--;
                 warn "something wrong to parse: $file" if $if < 0;
                 next;
-            } elsif ( $if > 0 and /^\b(require|use)\s+($qr4name)/ ) {
-                warnIgnored( $2, $1, 'if' );
+            } elsif ( $if > 0 and /^\brequire\s+($qr4name)/ ) {
+                warnIgnored( 'require', $1, 'if' );
             }
-            next if $eval or $if;
+            next unless /\b(require|use)\s+/;
             scan_line( \%pairs, $_ );
         }
         close $fh;
     }
     my $deps  = {};
     my @local = ();
-    my $list  = Directory::Iterator->new($myLib);
+    my $list  = Directory::Iterator->new($myLib)
+        ;    # To Do: $myLib must be got from local::lib within plenv/PerlBrew
     while ( $list->next ) {
         my $file = $list->get;
-        next unless $file =~ s/\.p[lm]$//;
+        next unless $file =~ s!\.pm$!!;
         $file =~ s!/!::!g;
         push @local, $file;
     }
@@ -121,7 +129,9 @@ sub scan_line {
     my $pairs = shift;
     local $_ = shift;
     my @names = ();
-    return if /^\b(?:require|use)\s+5\.\d{3}_?\d{3};$/;
+    return if /^\buse\s+v5(?:\.\d{2}){1,2}\s*;/;    #ignore VERSION
+    return if /^\buse\s+5\.\d{3}(?:_\d{3})?;/;      #ignore old version
+
     if (/use\s+(?:base|parent)\s+qw[\("']\s*((?:$qr4name\s*){1,})[\)"']/) {
         push @names, split /\s+/, $1;
     } elsif (/use\s+(?:base|parent|autouse)\s+(['"])?($qr4name)\1?/) {
@@ -146,7 +156,7 @@ sub scan_line {
         next if exists $pairs->{$name};
         next if $name eq 'Plack::Builder';
         next if first { $name eq $_ } @pragmas;
-        next if $Upgrade and Module::CoreList->is_core($name);
+        next if !$Upgrade and Module::CoreList->is_core($name);
         $pairs->{$name} = get_version($name);
     }
     return %$pairs;

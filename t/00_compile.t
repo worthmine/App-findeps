@@ -15,7 +15,7 @@ foreach my $key ( sort keys %$map ) {
 }
 
 for (@list) {
-    is $_, 'Dummy', "succeed to scan a file";
+    is $_, 'Acme::BadExample', "succeed to scan a file";
 }
 
 done_testing;

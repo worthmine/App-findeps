@@ -11,7 +11,7 @@ subtest "plain" => sub {
         my $file = $list->get;
         my $done = qx"$^X script/findeps -L t/lib $file";
         chomp $done;
-        is $done, 'Dummy', "succeed to detect 'Dummy'";
+        is $done, 'Acme::BadExample', "succeed to detect only 'Acme::BadExample' in $file";
     }
 };
 

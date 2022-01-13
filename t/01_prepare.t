@@ -7,9 +7,8 @@ use Directory::Iterator;
 my $list = Directory::Iterator->new('t/scripts');
 while ( $list->next ) {
     my $file = $list->get;
-    like qx"prove $file 2>&1",
-        qr/^(?:Can't locate Dummy|Base class package "Dummy" is empty.)/,
-        "$file failed as expected";
+    do "./$file";
+    like $@, qr!^Can't locate Acme/BadExample!, "$file failed as expected";
 }
 
 done_testing;
