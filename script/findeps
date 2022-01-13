@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use feature qw(say);
 
-our $VERSION = "0.12";
+our $VERSION = "0.13";
 
 use List::Util qw(first);
 use Directory::Iterator;
